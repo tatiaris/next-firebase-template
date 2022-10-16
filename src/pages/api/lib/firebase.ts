@@ -1,3 +1,4 @@
+import { DocumentData, WhereFilterOp } from '@google-cloud/firestore';
 import fs from 'firebase-admin';
 
 if (fs.apps.length === 0) {
@@ -9,14 +10,14 @@ if (fs.apps.length === 0) {
 
 const db = fs.firestore();
 
-export const getDocId = async (colName: string, query: []) => {
+export const getDocId = async (colName: string, query: [string, WhereFilterOp, string]) => {
   const snapshot = await db.collection(colName).where(query[0], query[1], query[2]).get();
   return snapshot.docs[0].id;
 };
 
-export const findOneObject = async (colName: string, id: string = null, query: [] = null) => {
+export const findOneObject = async (colName: string, id: string = null, query: [string, WhereFilterOp, string] = null) => {
   const byId = id && id.length > 0;
-  const ref = byId ? db.collection(colName).doc(id) : db.collection(colName);
+  const ref = (byId ? db.collection(colName).doc(id) : db.collection(colName)) as DocumentData;
   const snapshot = await (byId ? ref.get() : ref.where(query[0], query[1], query[2]).get());
   const snapshotExists = (snapshot.empty !== undefined && !snapshot.empty) || snapshot.exists;
   return snapshotExists ? (byId ? { ...snapshot.data(), id: snapshot.id } : { ...snapshot.docs[0].data(), id: snapshot.docs[0].id }) : null;
@@ -24,7 +25,7 @@ export const findOneObject = async (colName: string, id: string = null, query: [
 
 export const insertOneObject = async (colName: string, newObject: any, id: string = null) => {
   const byId = id && id.length > 0;
-  const ref = byId ? db.collection(colName).doc(id) : db.collection(colName);
+  const ref = (byId ? db.collection(colName).doc(id) : db.collection(colName)) as DocumentData;
   const res = await (byId ? ref.set(newObject) : ref.add(newObject));
   return res.id !== undefined ? res.id : null;
 };
@@ -63,7 +64,7 @@ export const getAllObjects = async (colName: string) => {
   const snapshot = await db.collection(colName).get();
   const allObjs = [];
   snapshot.forEach((obj) => {
-    allObjs.push({...obj.data(), id: obj.id});
+    allObjs.push({ ...obj.data(), id: obj.id });
   });
   return allObjs;
 };

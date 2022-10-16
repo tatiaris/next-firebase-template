@@ -36,7 +36,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (error) {
     const errorObj = error as Error;
     const errorData = getErrorData(errorObj);
-    res.status(errorData.code).json({ success: false, data: errorData.message });
+    res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
   }
 });
 

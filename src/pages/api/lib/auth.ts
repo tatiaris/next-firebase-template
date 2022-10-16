@@ -2,7 +2,7 @@ import { decode, verify } from 'jsonwebtoken';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { findOneObject } from '@/lib/firebase';
 
-const isAdmin = async (auth) => {
+const isAdmin = async (auth: string) => {
   const decoded = decode(auth);
   const adminObject = await findOneObject('admin', decoded['id']);
   return adminObject ? adminObject.admin : false;

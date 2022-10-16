@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
 import { getAllFromDatabase, addOneToDatabase, updateOneInDatabase, deleteOneFromDatabase, getOneFromDatabase } from '@/components/helper';
-import { Container, Tabs, TextInput, Button, Group, Text, PasswordInput, useMantineTheme } from '@mantine/core';
+import { Container, TextInput, Button, Group, Text, PasswordInput, useMantineTheme } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { uploadFile } from '@/util/firebase';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { deleteFile, uploadFile } from '@/util/firebase';
 
 const Testing = (): React.ReactNode => {
   const theme = useMantineTheme();
@@ -22,14 +22,21 @@ const Testing = (): React.ReactNode => {
   const [file, setFile] = useState(null);
   const [fileValid, setFileValid] = useState(false);
 
+  const [fileStoragePath, setFileStoragePath] = useState('')
+
   const dropFile = (file) => {
     setFile(file);
     setFileValid(true);
   };
 
-  const submitFile = async () => {
+  const handleFileUpload = async () => {
     const fileDownloadURL = await uploadFile(file, 'images/testing-image-upload');
     console.log('fileDownloadURL', fileDownloadURL);
+  }
+
+  const handleFileDelete = async () => {
+    const data = await deleteFile(fileStoragePath);
+    console.log('fileDeleted', data);
   }
 
   const getOneTestingObj = async () => {
@@ -66,9 +73,8 @@ const Testing = (): React.ReactNode => {
   };
 
   return (
-    <div>
-      {/* <div style={{ padding: '50px', display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}> */}
-      <Container style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+    <Container>
+      <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
         <div>
           <h1>Get</h1>
           <TextInput label="(testing) object id" onChange={(e) => setGetObjectId(e.target.value)} />
@@ -102,9 +108,9 @@ const Testing = (): React.ReactNode => {
           <br />
           <Button onClick={deleteTestingObj}>Delete</Button>
         </div>
-      </Container>
-      <Container style={{ marginBottom: '100px' }}>
-        <h1>Image Upload</h1>
+      </div>
+      <div>
+        <h1>Upload File</h1>
         <Dropzone onDrop={(files) => dropFile(files[0])} onReject={() => setFileValid(false)} maxSize={3 * 1024 ** 2} accept={IMAGE_MIME_TYPE}>
           <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: 'none' }}>
             <Dropzone.Accept>
@@ -116,7 +122,6 @@ const Testing = (): React.ReactNode => {
             <Dropzone.Idle>
               <IconPhoto size={50} stroke={1.5} />
             </Dropzone.Idle>
-
             <div>
               <Text size="xl" inline>
                 Drag images here or click to select files
@@ -138,11 +143,16 @@ const Testing = (): React.ReactNode => {
           </Group>
         </Dropzone>
         <br />
-        <Button disabled={!fileValid && !file} onClick={submitFile}>
+        <Button disabled={!fileValid && !file} onClick={handleFileUpload}>
           Submit Image
         </Button>
-      </Container>
-    </div>
+        <br /><br />
+        <h1>Delete File</h1>
+        <TextInput label="(testing) file storage path" onChange={(e) => setFileStoragePath(e.target.value)} />
+        <br />
+        <Button onClick={handleFileDelete}>Delete File</Button>
+      </div>
+    </Container>
   );
 };
 

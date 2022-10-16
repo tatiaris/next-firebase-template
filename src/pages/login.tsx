@@ -44,7 +44,8 @@ const Login = ({ session }): React.ReactNode => {
     if (!data.success) setSignupFailed(true);
   }
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuth = async (e) => {
+    e.preventDefault();
     const data = await signInWithGoogle();
     if (!data.success) setGoogleSignupFailed(true);
   }
@@ -65,7 +66,7 @@ const Login = ({ session }): React.ReactNode => {
           </Tabs.List>
 
           <Tabs.Panel value="login" pt="xs">
-            <form onSubmit={loginForm.onSubmit((values) => login(values))}>
+            <form onSubmit={loginForm.onSubmit((values) => handleLogin(values))}>
               <br />
               <TextInput required withAsterisk label="Email" placeholder="your@email.com" {...loginForm.getInputProps('email')} />
               <br />
@@ -79,7 +80,7 @@ const Login = ({ session }): React.ReactNode => {
           </Tabs.Panel>
 
           <Tabs.Panel value="signup" pt="xs">
-            <form onSubmit={signupForm.onSubmit((values) => signupUser({ email: values.email, displayName: values.displayName }, values.password, setSignupFailed))}>
+            <form onSubmit={signupForm.onSubmit((values) => handleSignup(values))}>
               <br />
               <TextInput required withAsterisk label="Display Name" placeholder="John Doe" {...signupForm.getInputProps('displayName')} />
               <br />
@@ -95,7 +96,7 @@ const Login = ({ session }): React.ReactNode => {
           </Tabs.Panel>
         </Tabs>
         <br />
-        <Button fullWidth color="yellow" leftIcon={<IconBrandGoogle />} onClick={handleGoogleAuth}>
+        <Button type='button' fullWidth color="yellow" leftIcon={<IconBrandGoogle />} onClick={handleGoogleAuth}>
           Continue with Google
         </Button>
         {googleSignupFailed ? <Text color="red">Could not sign in with Google.</Text> : <></>}

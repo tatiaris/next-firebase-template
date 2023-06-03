@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { logout } from '@/components/helper';
 import { config } from '@/components/config';
-import { IconChevronDown, IconHome2, IconTool } from '@tabler/icons';
+import { IconChevronDown, IconHome2, IconTool } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Paper, Menu, Center, Header, Container, Group, Button, Burger, Avatar, Text, UnstyledButton, Transition, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -16,17 +16,20 @@ const links = [
   {
     link: '/',
     label: 'Home',
-    icon: <IconHome2 size={12} stroke={2} />
+    icon: <IconHome2 size={12} stroke={2} />,
+    links: null
   },
   {
     link: '/testing',
     label: 'Testing',
-    icon: <IconTool size={12} stroke={2} />
+    icon: <IconTool size={12} stroke={2} />,
+    links: null
   }
 ];
 
 interface NavbarProps {
   session: any;
+  setSession: any;
 }
 export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.ReactElement => {
   const theme = useMantineTheme();
@@ -44,15 +47,13 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
 
   const burgerItems = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Link key={item.label} href={item.link}>
-        <a
-          className={cx(classes.nav_link, { [classes.nav_linkActive]: active === item.link })}
-          onClick={(event) => {
-            setActive(item.link);
-            close();
-          }}>
-          {item.icon} {item.label}
-        </a>
+      <Link key={item.label} href={item.link}
+        className={cx(classes.nav_link, { [classes.nav_linkActive]: active === item.link })}
+        onClick={(event) => {
+          setActive(item.link);
+          close();
+        }}>
+        {item.icon} {item.label}
       </Link>
     ));
     if (menuItems) {
@@ -66,15 +67,13 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
       );
     }
     return (
-      <Link key={link.label} href={link.link}>
-        <a
-          className={cx(classes.nav_link, { [classes.nav_linkActive]: active === link.link })}
-          onClick={(event) => {
-            setActive(link.link);
-            close();
-          }}>
-          {link.icon} {link.label}
-        </a>
+      <Link key={link.label} href={link.link}
+        className={cx(classes.nav_link, { [classes.nav_linkActive]: active === link.link })}
+        onClick={(event) => {
+          setActive(link.link);
+          close();
+        }}>
+        {link.icon} {link.label}
       </Link>
     );
   });
@@ -92,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
 
     if (menuItems) {
       return (
-        <Menu key={link.label} trigger="hover" exitTransitionDuration={0}>
+        <Menu key={link.label} trigger="hover">
           <Menu.Target>
             <span className={classes.nav_link}>
               <Center>
@@ -107,9 +106,7 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
     }
 
     return (
-      <Link key={link.label} href={link.link}>
-        <a className={classes.nav_link}>{link.label}</a>
-      </Link>
+      <Link key={link.label} href={link.link} className={classes.nav_link}>{link.label}</Link>
     );
   });
 
@@ -133,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
         <Group style={{ width: '100%', justifyContent: 'flex-end' }}>
           {!session ? (
             <Link href="/login" passHref>
-              <Button component="a">Login / Signup</Button>
+              <Button>Login / Signup</Button>
             </Link>
           ) : (
             <Menu position="bottom-end" offset={-4} width="target" withArrow arrowSize={15} arrowOffset={25}>
@@ -162,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item onClick={toggleColorScheme} color="blue">
+                <Menu.Item onClick={() => toggleColorScheme} color="blue">
                   Toggle Theme
                 </Menu.Item>
                 <Menu.Item onClick={handleLogout} color="red">

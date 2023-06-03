@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { getAllFromDatabase, addOneToDatabase, updateOneInDatabase, deleteOneFromDatabase, getOneFromDatabase } from '@/components/helper';
 import { Container, TextInput, Button, Group, Text, PasswordInput, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons';
+import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { deleteFile, uploadFile } from '@/util/firebase';
 

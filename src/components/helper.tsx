@@ -104,31 +104,10 @@ export const getMultipleFromDatabase = async (collection: string, id: string) =>
 
 export const getSession = async () => {
   const udata = decode(getCookie('udata'));
-  if (udata) return udata.user;
+  if (udata) return udata["user"];
   const res = await fetch(`/api/auth/session`, { credentials: 'include' });
   const sessionData = await res.json();
   return sessionData.session;
-};
-
-export const login1 = (email, password, redirect = '/') => {
-  fetch(`/api/auth/login`, {
-    method: 'POST',
-    headers: headers['POST'],
-    body: JSON.stringify({ email, password })
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setLoginFailed(false);
-        navigatePath(redirect);
-      } else {
-        setLoginFailed(true);
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      setLoginFailed(true);
-    });
 };
 
 export const login = async (email, password, redirect = '/') => {
@@ -138,7 +117,7 @@ export const login = async (email, password, redirect = '/') => {
       headers: headers['POST'],
       body: JSON.stringify({ email, password })
     });
-    const data = res.json();
+    const data = await res.json();
     if (data.success) navigatePath(redirect);
     return data;
   } catch (error) {
@@ -165,33 +144,12 @@ export const logout = async () => {
       method: 'POST',
       headers: headers['POST']
     });
-    const data = res.json();
+    const data = await res.json();
     if (data.success) refreshPage();
     return data;
   } catch (error) {
     return { success: false, data: 'Internal server error', error };
   }
-};
-
-export const signupUser1 = (newUser, password, setSignupFailed, redirect = '/') => {
-  fetch(`/api/auth/signup`, {
-    method: 'POST',
-    headers: headers['POST'],
-    body: JSON.stringify({ newUser, password })
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        setSignupFailed(false);
-        navigatePath(redirect);
-      } else {
-        setSignupFailed(true);
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      setSignupFailed(true);
-    });
 };
 
 export const signupUser = async (newUser, password, redirect = '/') => {
@@ -201,7 +159,7 @@ export const signupUser = async (newUser, password, redirect = '/') => {
       headers: headers['POST'],
       body: JSON.stringify({ newUser, password })
     });
-    const data = res.json();
+    const data = await res.json();
     if (data.success) navigatePath(redirect);
     return data;
   } catch (error) {

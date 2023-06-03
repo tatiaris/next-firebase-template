@@ -4,6 +4,10 @@ const BREAKPOINT = '@media (max-width: 755px)';
 export const HEADER_HEIGHT = 60;
 
 export const useStyles = createStyles((theme) => ({
+  nav_linkActive: {
+
+  },
+
   wrapper: {
     position: 'relative',
     marginBottom: 30

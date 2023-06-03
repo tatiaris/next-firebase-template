@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { login, navigatePath, signupUser } from '@/components/helper';
 import { signInWithGoogle } from '@/util/firebase';
 import { Container, Tabs, TextInput, Button, Group, Text, PasswordInput } from '@mantine/core';
-import { IconUserPlus, IconUserCircle, IconBrandGoogle } from '@tabler/icons';
+import { IconUserPlus, IconUserCircle, IconBrandGoogle } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 
 const Login = ({ session }): React.ReactNode => {

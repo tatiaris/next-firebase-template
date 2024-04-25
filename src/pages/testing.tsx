@@ -1,14 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 import { getAllFromDatabase, addOneToDatabase, updateOneInDatabase, deleteOneFromDatabase, getOneFromDatabase } from '@/components/helper';
-import { Container, TextInput, Button, Group, Text, PasswordInput, useMantineTheme } from '@mantine/core';
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { deleteFile, uploadFile } from '@/util/firebase';
 
 const Testing = (): React.ReactNode => {
-  const theme = useMantineTheme();
-
   const [getObjectId, setGetObjectId] = useState('');
   const [testingName, setTestingName] = useState('');
   const [testingMotto, setTestingMotto] = useState('');
@@ -24,7 +19,8 @@ const Testing = (): React.ReactNode => {
 
   const [fileStoragePath, setFileStoragePath] = useState('')
 
-  const dropFile = (file) => {
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
     setFile(file);
     setFileValid(true);
   };
@@ -73,86 +69,60 @@ const Testing = (): React.ReactNode => {
   };
 
   return (
-    <Container>
-      <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
-        <div>
-          <h1>Get</h1>
-          <TextInput label="(testing) object id" onChange={(e) => setGetObjectId(e.target.value)} />
-          <br />
-          <Button onClick={getOneTestingObj}>Get</Button>
-          <br />
-          <br />
-          <Button onClick={getAllTestingObjs}>Get All</Button>
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: 10, paddingBottom: 25, display: 'flex', gap: 20, flexWrap: 'wrap', borderBottom: '1px solid #ccc' }}>
+          <div>
+            <h2>Get</h2>
+            <input placeholder="(testing) object id" onChange={(e) => setGetObjectId(e.target.value)} />
+            <br />
+            <button onClick={getOneTestingObj}>Get</button>
+            <br />
+            <button onClick={getAllTestingObjs}>Get All</button>
+          </div>
+          <div>
+            <h2>Post</h2>
+            <input placeholder="(testing) Name" onChange={(e) => setTestingName(e.target.value)} />
+            <br />
+            <input placeholder="(testing) motto" onChange={(e) => setTestingMotto(e.target.value)} />
+            <br />
+            <button onClick={addTestingObj}>Insert</button>
+          </div>
+          <div>
+            <h2>Put</h2>
+            <input placeholder="(testing) object id" onChange={(e) => setUpdatedTestingObjId(e.target.value)} />
+            <br />
+            <input placeholder="(testing) updated name" onChange={(e) => setUpdatedTestingName(e.target.value)} />
+            <br />
+            <input placeholder="(testing) updated motto" onChange={(e) => setUpdatedTestingMotto(e.target.value)} />
+            <br />
+            <button onClick={updateTestingObj}>Update</button>
+          </div>
+          <div>
+            <h2>Delete</h2>
+            <input placeholder="(testing) object id" onChange={(e) => setDeleteTestingObjId(e.target.value)} />
+            <br />
+            <button onClick={deleteTestingObj}>Delete</button>
+          </div>
         </div>
-        <div>
-          <h1>Post</h1>
-          <TextInput label="(testing) Name" onChange={(e) => setTestingName(e.target.value)} />
-          <br />
-          <TextInput label="(testing) motto" onChange={(e) => setTestingMotto(e.target.value)} />
-          <br />
-          <Button onClick={addTestingObj}>Insert</Button>
-        </div>
-        <div>
-          <h1>Put</h1>
-          <TextInput label="(testing) object id" onChange={(e) => setUpdatedTestingObjId(e.target.value)} />
-          <br />
-          <TextInput label="(testing) updated name" onChange={(e) => setUpdatedTestingName(e.target.value)} />
-          <br />
-          <TextInput label="(testing) updated motto" onChange={(e) => setUpdatedTestingMotto(e.target.value)} />
-          <br />
-          <Button onClick={updateTestingObj}>Update</Button>
-        </div>
-        <div>
-          <h1>Delete</h1>
-          <TextInput label="(testing) object id" onChange={(e) => setDeleteTestingObjId(e.target.value)} />
-          <br />
-          <Button onClick={deleteTestingObj}>Delete</Button>
+        <div style={{ padding: 10, paddingBottom: 25, display: 'flex', gap: 20, flexWrap: 'wrap', borderBottom: '1px solid #ccc' }}>
+          <div>
+            <h2>Upload File</h2>
+            <input multiple type="file" name="file input" id="file-input" onChange={handleFileSelect} />
+            <br />
+            <button disabled={!fileValid || !file} onClick={handleFileUpload}>
+              Submit Image
+            </button>
+          </div>
+          <div>
+            <h2>Delete File</h2>
+            <input placeholder="(testing) file storage path" onChange={(e) => setFileStoragePath(e.target.value)} />
+            <br />
+            <button onClick={handleFileDelete}>Delete File</button>
+          </div>
         </div>
       </div>
-      <div>
-        <h1>Upload File</h1>
-        <Dropzone onDrop={(files) => dropFile(files[0])} onReject={() => setFileValid(false)} maxSize={3 * 1024 ** 2} accept={IMAGE_MIME_TYPE}>
-          <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: 'none' }}>
-            <Dropzone.Accept>
-              <IconUpload size={50} stroke={1.5} color={theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]} />
-            </Dropzone.Accept>
-            <Dropzone.Reject>
-              <IconX size={50} stroke={1.5} color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]} />
-            </Dropzone.Reject>
-            <Dropzone.Idle>
-              <IconPhoto size={50} stroke={1.5} />
-            </Dropzone.Idle>
-            <div>
-              <Text size="xl" inline>
-                Drag images here or click to select files
-              </Text>
-              <Text size="sm" color="dimmed" inline mt={7}>
-                Attach as many files as you like, each file should not exceed 5mb
-              </Text>
-              {file !== null && (
-                <Text size="sm" mt="xs" color="dimmed">
-                  <b>
-                    Selected file:{' '}
-                    <Text span color="red">
-                      {file.name}
-                    </Text>
-                  </b>
-                </Text>
-              )}
-            </div>
-          </Group>
-        </Dropzone>
-        <br />
-        <Button disabled={!fileValid && !file} onClick={handleFileUpload}>
-          Submit Image
-        </Button>
-        <br /><br />
-        <h1>Delete File</h1>
-        <TextInput label="(testing) file storage path" onChange={(e) => setFileStoragePath(e.target.value)} />
-        <br />
-        <Button onClick={handleFileDelete}>Delete File</Button>
-      </div>
-    </Container>
+    </div>
   );
 };
 

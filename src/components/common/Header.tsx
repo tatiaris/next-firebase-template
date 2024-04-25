@@ -1,13 +1,11 @@
 import React from 'react';
 import Head from 'next/head';
 import { config } from '@/components/config';
-import { useMantineTheme } from '@mantine/core';
 
 /**
  * Header component
  */
 export const Header: React.FC = () => {
-  const theme = useMantineTheme();
   return (
     <Head>
       <title>{config.name}</title>

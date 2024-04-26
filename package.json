@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx}\" --config ./.prettierrc",
     "test": "jest --watchAll",
     "precommit": "lint-staged",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "prepare": "husky"
   },
   "dependencies": {
     "@google-cloud/firestore": "^7.6.0",
@@ -49,11 +50,6 @@
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

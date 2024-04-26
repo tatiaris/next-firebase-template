@@ -43,7 +43,6 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "src/pages/api/user/index.ts"
+    "**/*.tsx"
   ]
 }

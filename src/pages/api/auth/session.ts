@@ -20,5 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   } else {
     // Handle any other HTTP method
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

@@ -20,7 +20,7 @@ export const signInWithGoogle = async (redirect = '/') => {
 
 const storage = getStorage(app);
 
-const checkIfFileExists = async (filePath: string): Promise<Boolean> => {
+const checkIfFileExists = async (filePath: string): Promise<boolean> => {
   const storageRef = ref(storage, filePath);
   try {
     await getDownloadURL(storageRef);
@@ -28,7 +28,7 @@ const checkIfFileExists = async (filePath: string): Promise<Boolean> => {
   } catch (error) {
     return false;
   }
-}
+};
 
 export const uploadFile = async (file, path, replace = false) => {
   try {

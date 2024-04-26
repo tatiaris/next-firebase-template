@@ -19,7 +19,7 @@ const Testing = (): React.ReactNode => {
   const [file, setFile] = useState(null);
   const [fileValid, setFileValid] = useState(false);
 
-  const [fileStoragePath, setFileStoragePath] = useState('')
+  const [fileStoragePath, setFileStoragePath] = useState('');
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -31,12 +31,12 @@ const Testing = (): React.ReactNode => {
   const handleFileUpload = async () => {
     const fileDownloadURL = await uploadFile(file, 'images/testing-image-upload');
     logger.log('fileDownloadURL', fileDownloadURL);
-  }
+  };
 
   const handleFileDelete = async () => {
     const data = await deleteFile(fileStoragePath);
     logger.log('fileDeleted', data);
-  }
+  };
 
   const getOneTestingObj = async () => {
     const data = await getOneFromDatabase('testing', getObjectId);

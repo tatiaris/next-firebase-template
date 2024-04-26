@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   authenticated(
     selfAuthorized(async (req: NextApiRequest, res: NextApiResponse) => {
       const id = req.query.id as string;
+      const { updatedKeysAndVals } = req.body;
       switch (req.method) {
         case 'GET':
           try {
@@ -21,7 +22,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
           break;
         case 'PUT':
-          const { updatedKeysAndVals } = req.body;
           try {
             if (id && updatedKeysAndVals) {
               const data = await updateOneObject(collectionName, id, updatedKeysAndVals);

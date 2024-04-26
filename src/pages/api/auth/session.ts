@@ -10,11 +10,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(200).json({ success: true, session: user });
     } catch (error) {
       res.status(200).json({
-        success: true, session: {
+        success: true,
+        session: {
           id: `guest-${Date.now()}`,
           username: '',
           email: '',
-          photoURL: '',
+          photoURL: ''
         }
       });
     }

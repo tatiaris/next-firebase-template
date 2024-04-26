@@ -14,32 +14,32 @@ const Login = (): React.ReactNode => {
     e.preventDefault();
     const data = await login(email, password);
     if (!data.success) setLoginFailed(true);
-  }
+  };
 
   const handleGoogleAuth = async (e) => {
     e.preventDefault();
     const data = await signInWithGoogle();
     if (!data.success) setGoogleSignupFailed(true);
-  }
+  };
 
   if (!isGuest) navigatePath('/');
   else {
     return (
       <div style={{ padding: 10 }}>
         <form onSubmit={handleLogin}>
-          <input type='text' required placeholder="your@email.com" onChange={e => setEmail(e.target.value)} />
+          <input type="text" required placeholder="your@email.com" onChange={(e) => setEmail(e.target.value)} />
           <br />
-          <input type='password' required placeholder="123xyz" onChange={e => setPassword(e.target.value)} />
+          <input type="password" required placeholder="123xyz" onChange={(e) => setPassword(e.target.value)} />
           {loginFailed ? <span style={{ color: 'red' }}>Wrong email or password.</span> : <></>}
           <br />
           <button type="submit">Submit</button>
         </form>
         <br />
-        <button type='button' onClick={handleGoogleAuth}>
+        <button type="button" onClick={handleGoogleAuth}>
           Login with Google
         </button>
         {googleSignupFailed ? <span style={{ color: 'red' }}>Could not sign in with Google.</span> : <></>}
-      </div >
+      </div>
     );
   }
 };

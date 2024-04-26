@@ -4,14 +4,15 @@ import { authenticated, adminAuthorized } from '@lib/auth';
 import { getErrorData } from '@lib/helper';
 
 export type adminQuery = {
-  id: string,
-  collection: string
-}
+  id: string;
+  collection: string;
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   authenticated(
     adminAuthorized(async (req: NextApiRequest, res: NextApiResponse) => {
       const { id, collection } = req.query as adminQuery;
+      const { updatedKeysAndVals } = req.body;
       switch (req.method) {
         case 'GET':
           try {
@@ -24,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
           break;
         case 'PUT':
-          const { updatedKeysAndVals } = req.body;
           try {
             if (id && updatedKeysAndVals) {
               const data = await updateOneObject(collection, id, updatedKeysAndVals);

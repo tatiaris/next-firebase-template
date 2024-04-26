@@ -11,7 +11,7 @@ import { navLinks } from '@components/constants';
 
 export const Navbar: React.FC = (): React.ReactElement => {
   const [logoutFailed, setLogoutFailed] = useState(false);
-  const { session, isGuest, setSession } = useContext(SessionContext);
+  const { isGuest, setSession } = useContext(SessionContext);
   const handleLogout = async () => {
     const data = await logout();
     if (!data.success) setLogoutFailed(true);
@@ -20,15 +20,23 @@ export const Navbar: React.FC = (): React.ReactElement => {
 
   return (
     <div style={{ padding: 10, display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid black' }}>
-      <div id='links-container' style={{ display: 'flex', gap: 10 }}>{navLinks.map(link => (
-        <Link href={link.link} key={link.link}>{link.label}</Link>
-      ))}</div>
-      <div id='actions-container'>
+      <div id="links-container" style={{ display: 'flex', gap: 10 }}>
+        {navLinks.map((link) => (
+          <Link href={link.link} key={link.link}>
+            {link.label}
+          </Link>
+        ))}
+      </div>
+      <div id="actions-container">
         {isGuest ? (
           <div>
-            <Link href="/login" passHref>Login</Link>
-            {" / "}
-            <Link href="/signup" passHref>Signup</Link>
+            <Link href="/login" passHref>
+              Login
+            </Link>
+            {' / '}
+            <Link href="/signup" passHref>
+              Signup
+            </Link>
           </div>
         ) : (
           <div>
@@ -37,7 +45,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
         )}
       </div>
     </div>
-  )
+  );
 };
 
 export default Navbar;

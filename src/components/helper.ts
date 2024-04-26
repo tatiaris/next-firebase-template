@@ -104,7 +104,7 @@ export const getMultipleFromDatabase = async (collection: string, id: string) =>
 
 export const getSession = async (): Promise<Session> => {
   const udata = decode(getCookie('udata'));
-  if (udata) return udata["user"];
+  if (udata) return udata['user'];
   const res = await fetch(`/api/auth/session`, { credentials: 'include' });
   const sessionData = await res.json();
   return sessionData.session;

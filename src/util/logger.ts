@@ -1,5 +1,5 @@
-import { Session } from "@components/types";
-import { createContext } from "react";
+import { Session } from '@components/types';
+import { createContext } from 'react';
 
 class Logger {
   session: Session | null;
@@ -10,10 +10,10 @@ class Logger {
     this.session = session;
   }
   getSessionLogData() {
-    return "id:" + (this.session ? this.session.id : 'guest');
+    return 'id:' + (this.session ? this.session.id : 'guest');
   }
   getTime() {
-    return "time:" + new Date().toISOString();
+    return 'time:' + new Date().toISOString();
   }
   log(message: any, ...optionalParams: any[]) {
     console.log(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());

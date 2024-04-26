@@ -15,6 +15,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       }
     })(req, res);
   } else {
-    res.status(400).json({ success: false, message: "Bad Request", data: {} });
+    res.status(400).json({ success: false, message: 'Bad Request', data: {} });
   }
 }

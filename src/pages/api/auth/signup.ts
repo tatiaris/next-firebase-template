@@ -33,12 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         throw new Error('400 - Missing user data or password');
       }
     } catch (error) {
-      console.log("ERROR", error);
+      console.log('ERROR', error);
       const errorObj = error as Error;
       const errorData = getErrorData(errorObj);
       res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
     }
   } else {
-    res.status(400).json({ success: false, message: "Bad Request", data: {} });
+    res.status(400).json({ success: false, message: 'Bad Request', data: {} });
   }
 }

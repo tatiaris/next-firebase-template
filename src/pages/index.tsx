@@ -11,12 +11,10 @@ const Home = (): React.ReactNode => {
       <br />
       E-mail: {session.email}
       <br />
-      <img width={50} height={50} src={session.photoURL} alt='' />
+      <img width={50} height={50} src={session.photoURL} alt="" />
     </div>
   ) : (
-    <div style={{ padding: '10px' }}>
-      Logged-in: false
-    </div>
+    <div style={{ padding: '10px' }}>Logged-in: false</div>
   );
 };
 

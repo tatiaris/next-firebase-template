@@ -40,6 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
     }
   } else {
-    res.status(400).json({ success: false, message: "Bad Request", data: {} });
+    res.status(400).json({ success: false, message: 'Bad Request', data: {} });
   }
 }

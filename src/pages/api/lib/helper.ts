@@ -1,6 +1,6 @@
 import { sign } from 'jsonwebtoken';
 import cookie from 'cookie';
-import { sessionCookieAge } from '@/lib/constants';
+import { sessionCookieAge } from '@lib/constants';
 
 export const getErrorData = (error) => {
   try {

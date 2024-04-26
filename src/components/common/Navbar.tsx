@@ -1,32 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
-import { logout } from '@/components/helper';
+import { logout } from '@components/helper';
 import { useState } from 'react';
+import { SessionContext } from '@hooks/useSessionContext';
+import { navLinks } from '@components/constants';
+
 /**
  * Navbar component
  */
 
-const links = [
-  {
-    link: '/',
-    label: 'Home',
-    links: null
-  },
-  {
-    link: '/testing',
-    label: 'Testing',
-    links: null
-  }
-];
-
-interface NavbarProps {
-  session: any;
-  setSession: any;
-}
-export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.ReactElement => {
-  const [active, setActive] = useState(links[0].link);
-
+export const Navbar: React.FC = (): React.ReactElement => {
   const [logoutFailed, setLogoutFailed] = useState(false);
+  const { session, isGuest, setSession } = useContext(SessionContext);
   const handleLogout = async () => {
     const data = await logout();
     if (!data.success) setLogoutFailed(true);
@@ -35,21 +20,15 @@ export const Navbar: React.FC<NavbarProps> = ({ session, setSession }): React.Re
 
   return (
     <div style={{ padding: 10, display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid black' }}>
-      <div id='links-container' style={{ display: 'flex', gap: 10 }}>{links.map(link => (
-        <Link href={link.link} key={link.link}>
-          <span>{link.label}</span>
-        </Link>
+      <div id='links-container' style={{ display: 'flex', gap: 10 }}>{navLinks.map(link => (
+        <Link href={link.link} key={link.link}>{link.label}</Link>
       ))}</div>
       <div id='actions-container'>
-        {!session ? (
+        {isGuest ? (
           <div>
-            <Link href="/login" passHref>
-              <span>Login</span>
-            </Link>
+            <Link href="/login" passHref>Login</Link>
             {" / "}
-            <Link href="/signup" passHref>
-              <span>Signup</span>
-            </Link>
+            <Link href="/signup" passHref>Signup</Link>
           </div>
         ) : (
           <div>

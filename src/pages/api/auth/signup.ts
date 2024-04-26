@@ -1,7 +1,7 @@
 import { hash } from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getErrorData, setSessionCookies } from '@/lib/helper';
-import { findOneObject, insertOneObject } from '@/lib/firebase';
+import { getErrorData, setSessionCookies } from '@lib/helper';
+import { findOneObject, insertOneObject } from '@lib/firebase';
 
 const collectionName = 'users';
 

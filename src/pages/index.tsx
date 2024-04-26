@@ -1,11 +1,11 @@
-import React from 'react';
+import { SessionContext } from '@hooks/useSessionContext';
+import React, { useContext } from 'react';
 
-const Home = ({ session }): React.ReactNode => {
-  return session ? (
+const Home = (): React.ReactNode => {
+  const { session, isGuest } = useContext(SessionContext);
+  return !isGuest ? (
     <div style={{ padding: '10px' }}>
-      Homepage
-      <br />
-      Logged-in: True
+      Logged-in: true
       <br />
       Welcome {session.displayName}
       <br />
@@ -15,9 +15,7 @@ const Home = ({ session }): React.ReactNode => {
     </div>
   ) : (
     <div style={{ padding: '10px' }}>
-      Homepage
-      <br />
-      Logged-in: False
+      Logged-in: false
     </div>
   );
 };

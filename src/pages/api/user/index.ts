@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
-import { getErrorData } from '@/lib/helper';
-import { getAllObjects, insertOneObject, updateOneObject } from '@/lib/firebase';
+import { getErrorData } from '@lib/helper';
+import { getAllObjects, insertOneObject, updateOneObject } from '@lib/firebase';
 
 const collectionName = 'users';
 const handler = nextConnect();

@@ -1,12 +1,12 @@
-import { useRouter } from 'next/router';
-import { headers } from '@/components/constants';
+import { headers } from '@components/constants';
 import { decode } from 'jsonwebtoken';
+import { Session } from './types';
 
 export const sum = (a: number, b: number): number => {
   return a + b;
 };
 
-export const getCookie = (c_name: string) => {
+export const getCookie = (c_name: string): string => {
   let c_value = ' ' + document.cookie;
   let c_start = c_value.indexOf(' ' + c_name + '=');
   if (c_start == -1) {
@@ -43,7 +43,7 @@ export const addOneToDatabase = async (collection: string, newObject: any) => {
 };
 
 export const updateOneInDatabase = async (collection: string, objectId: string, updatedKeysAndVals: any) => {
-  const res = await fetch(`/api/admin/${collection}`, {
+  const res = await fetch(`/api/admin/${collection}/${objectId}`, {
     method: 'PUT',
     headers: headers['PUT'],
     body: JSON.stringify({ objectId, updatedKeysAndVals })
@@ -102,7 +102,7 @@ export const getMultipleFromDatabase = async (collection: string, id: string) =>
 
 /* USER FUNCTIONS */
 
-export const getSession = async () => {
+export const getSession = async (): Promise<Session> => {
   const udata = decode(getCookie('udata'));
   if (udata) return udata["user"];
   const res = await fetch(`/api/auth/session`, { credentials: 'include' });
@@ -123,19 +123,6 @@ export const login = async (email, password, redirect = '/') => {
   } catch (error) {
     return { success: false, data: 'Internal server error', error };
   }
-};
-
-export const logout1 = (redirect = '/') => {
-  fetch(`/api/auth/logout`, {
-    method: 'POST',
-    headers: headers['POST']
-  })
-    .then(() => {
-      window.location.href = redirect;
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
 };
 
 export const logout = async () => {

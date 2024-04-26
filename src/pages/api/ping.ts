@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import nextConnect from 'next-connect';
 
-const handler = nextConnect();
-
-handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  res.status(200).json({ success: true, data: 'pong!' });
-});
-
-export default handler;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    res.status(200).json({ success: true, data: 'pong!' });
+  } else {
+    // Handle any other HTTP method
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}

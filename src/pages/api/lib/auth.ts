@@ -1,6 +1,6 @@
 import { decode, verify } from 'jsonwebtoken';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
-import { findOneObject } from '@/lib/firebase';
+import { findOneObject } from '@lib/firebase';
 
 const isAdmin = async (auth: string) => {
   const decoded = decode(auth);

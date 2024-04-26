@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import { navigatePath, signupUser } from '@/components/helper';
-import { signInWithGoogle } from '@/util/firebase';
-import { useForm } from '@mantine/form';
+import React, { useContext, useState } from 'react';
+import { navigatePath, signupUser } from '@components/helper';
+import { signInWithGoogle } from '@util/firebase';
+import { SessionContext } from '@hooks/useSessionContext';
 
-const Signup = ({ session }): React.ReactNode => {
-  const signupForm = useForm({
-    initialValues: {
-      email: '',
-      displayName: '',
-      password: ''
-    },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      displayName: (value) => (value.length > 1 ? null : 'Invalid display name')
-    }
-  });
-
+const Signup = (): React.ReactNode => {
+  const { isGuest } = useContext(SessionContext);
+  const [email, setEmail] = useState('');
+  const [emailValid, setEmailValid] = useState(true);
+  const [password, setPassword] = useState('');
+  const [passwordValid, setPasswordValid] = useState(true);
+  const [displayName, setDisplayName] = useState('');
+  const [displayNameValid, setDisplayNameValid] = useState(true);
   const [signupFailed, setSignupFailed] = useState(false);
   const [googleSignupFailed, setGoogleSignupFailed] = useState(false);
 
-  const handleSignup = async (values) => {
-    const { email, displayName, password } = values;
+  const validateEmail = () => {
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setEmailValid(emailValid);
+  }
+
+  const validatePassword = () => {
+    const passwordValid = password.length >= 6;
+    setPasswordValid(passwordValid);
+  }
+
+  const validateDisplayName = () => {
+    const displayNameValid = displayName.length >= 2;
+    setDisplayNameValid(displayNameValid);
+  }
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
     const data = await signupUser({ email, displayName }, password);
     if (!data.success) setSignupFailed(true);
   }
@@ -31,19 +41,17 @@ const Signup = ({ session }): React.ReactNode => {
     if (!data.success) setGoogleSignupFailed(true);
   }
 
-  if (session === undefined) return <></>;
-  if (session) navigatePath('/');
+  if (!isGuest) navigatePath('/');
   else {
     return (
       <div style={{ padding: 10 }}>
-
-        <form onSubmit={signupForm.onSubmit((values) => handleSignup(values))}>
-          <br />
-          <input type='text' required placeholder="John Doe" {...signupForm.getInputProps('displayName')} />
-          <br />
-          <input type='text' required placeholder="jdoe@email.com" {...signupForm.getInputProps('email')} />
-          <br />
-          <input type='password' required placeholder="123xyz" {...signupForm.getInputProps('password')} />
+        <form onSubmit={handleSignup}>
+          <input type='text' required placeholder="John Doe" onChange={e => setDisplayName(e.target.value)} onBlur={validateDisplayName} />
+          {!displayNameValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Name must 2 or more characters</span> : <br />}
+          <input type='text' required placeholder="jdoe@email.com" onChange={e => setEmail(e.target.value)} onBlur={validateEmail} />
+          {!emailValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Invalid email</span> : <br />}
+          <input type='password' required placeholder="123xyz" onChange={e => setPassword(e.target.value)} onBlur={validatePassword} />
+          {!passwordValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Password must be 6 or more characters</span> : <br />}
           {signupFailed ? <span style={{ color: 'red' }}>User already exists.</span> : <></>}
           <br />
           <button type="submit">Submit</button>

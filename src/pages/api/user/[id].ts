@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
-import { findOneObject, updateOneObject, deleteOneObject } from '@/lib/firebase';
-import { authenticated, selfAuthorized } from '@/lib/auth';
-import { getErrorData } from '@/lib/helper';
+import { findOneObject, updateOneObject, deleteOneObject } from '@lib/firebase';
+import { authenticated, selfAuthorized } from '@lib/auth';
+import { getErrorData } from '@lib/helper';
 
 const collectionName = 'users';
 const handler = nextConnect();

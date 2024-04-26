@@ -1,15 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import nextConnect from 'next-connect';
-import { authenticated, adminAuthorized } from '@/lib/auth';
+import { authenticated, adminAuthorized } from '@lib/auth';
 
-const handler = nextConnect();
-
-handler.get(
-  authenticated(
-    adminAuthorized(async (req: NextApiRequest, res: NextApiResponse) => {
-      res.status(200).json({ admin: true });
-    })
-  )
-);
-
-export default handler;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    authenticated((req: NextApiRequest, res: NextApiResponse) => {
+      adminAuthorized((req: NextApiRequest, res: NextApiResponse) => {
+        res.status(200).json({ admin: true });
+      })(req, res);
+    })(req, res);
+  } else {
+    // Handle any other HTTP method
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}

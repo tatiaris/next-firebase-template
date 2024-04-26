@@ -1,7 +1,7 @@
 import { compare } from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getErrorData, setSessionCookies } from '@/lib/helper';
-import { findOneObject, getDocId } from '@/lib/firebase';
+import { getErrorData, setSessionCookies } from '@lib/helper';
+import { findOneObject, getDocId } from '@lib/firebase';
 
 const collectionName = 'users';
 
@@ -17,9 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const userAuth = await findOneObject('auth', userId);
           if (userAuth) {
             const saltPepperPassword = rawPassword + existingUser.email + process.env.AUTH_SECRET_KEY;
-            console.log("HERE");
             await compare(saltPepperPassword, userAuth.password, function (err, result) {
-              console.log("HERE 1");
               if (!err && result) {
                 setSessionCookies(res, userId, existingUser);
                 res.json({ success: true, message: 'Welcome back!', data: existingUser });

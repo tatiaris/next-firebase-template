@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getErrorData, deleteSessionCookies } from '@/lib/helper';
+import { getErrorData, deleteSessionCookies } from '@lib/helper';
 import { verify } from 'jsonwebtoken';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -10,12 +10,12 @@ export const headers = {
 export const navLinks = [
   {
     link: '/',
-    label: 'Home',
+    label: 'home',
     links: null
   },
   {
-    link: '/testing',
-    label: 'Testing',
+    link: '/admin',
+    label: 'admin',
     links: null
   }
 ];

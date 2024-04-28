@@ -3,11 +3,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getErrorData, setSessionCookies } from '@lib/helper';
 import { findOneObject, insertOneObject } from '@lib/firebase';
 
-const collectionName = 'users';
+const collectionName = 'user';
 
 export type NewUser = {
   email: string;
-  displayName: string;
+  name: string;
   photoURL?: string;
 };
 
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         throw new Error('400 - Missing user data or password');
       }
     } catch (error) {
-      console.log('ERROR', error);
+      console.error('ERROR', error);
       const errorObj = error as Error;
       const errorData = getErrorData(errorObj);
       res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });

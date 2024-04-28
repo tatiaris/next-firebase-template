@@ -3,7 +3,7 @@ import { findOneObject, updateOneObject, deleteOneObject } from '@lib/firebase';
 import { authenticated, selfAuthorized } from '@lib/auth';
 import { getErrorData } from '@lib/helper';
 
-const collectionName = 'users';
+const collectionName = 'user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   authenticated(

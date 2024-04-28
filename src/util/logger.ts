@@ -19,16 +19,16 @@ class Logger {
     console.log(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());
   }
   error(message: any, ...optionalParams: any[]) {
-    console.error(message, ...optionalParams, this.getSessionLogData());
+    console.error(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());
   }
   warn(message: any, ...optionalParams: any[]) {
-    console.warn(message, ...optionalParams, this.getSessionLogData());
+    console.warn(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());
   }
   info(message: any, ...optionalParams: any[]) {
-    console.info(message, ...optionalParams, this.getSessionLogData());
+    console.info(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());
   }
   debug(message: any, ...optionalParams: any[]) {
-    console.debug(message, ...optionalParams, this.getSessionLogData());
+    console.debug(message, ...optionalParams, this.getSessionLogData(), new Date().toISOString());
   }
 }
 

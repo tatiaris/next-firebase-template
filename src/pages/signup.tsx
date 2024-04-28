@@ -9,9 +9,12 @@ const Signup = (): React.ReactNode => {
   const [emailValid, setEmailValid] = useState(true);
   const [password, setPassword] = useState('');
   const [passwordValid, setPasswordValid] = useState(true);
-  const [displayName, setDisplayName] = useState('');
-  const [displayNameValid, setDisplayNameValid] = useState(true);
-  const [signupFailed, setSignupFailed] = useState(false);
+  const [name, setName] = useState('');
+  const [nameValid, setNameValid] = useState(true);
+  const [signupStatus, setSignupStatus] = useState({
+    status: '',
+    message: '',
+  });
   const [googleSignupFailed, setGoogleSignupFailed] = useState(false);
 
   const validateEmail = () => {
@@ -24,15 +27,17 @@ const Signup = (): React.ReactNode => {
     setPasswordValid(passwordValid);
   };
 
-  const validateDisplayName = () => {
-    const displayNameValid = displayName.length >= 2;
-    setDisplayNameValid(displayNameValid);
+  const validatename = () => {
+    const nameValid = name.length >= 2;
+    setNameValid(nameValid);
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const data = await signupUser({ email, displayName }, password);
-    if (!data.success) setSignupFailed(true);
+    const data = await signupUser({ email, name }, password);
+    if (!data.success) {
+      setSignupStatus({ status: 'error', message: data.message });
+    }
   };
 
   const handleGoogleAuth = async (e) => {
@@ -46,19 +51,17 @@ const Signup = (): React.ReactNode => {
     return (
       <div style={{ padding: 10 }}>
         <form onSubmit={handleSignup}>
-          <input type="text" required placeholder="John Doe" onChange={(e) => setDisplayName(e.target.value)} onBlur={validateDisplayName} />
-          {!displayNameValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Name must 2 or more characters</span> : <br />}
-          <input type="text" required placeholder="jdoe@email.com" onChange={(e) => setEmail(e.target.value)} onBlur={validateEmail} />
-          {!emailValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Invalid email</span> : <br />}
-          <input type="password" required placeholder="123xyz" onChange={(e) => setPassword(e.target.value)} onBlur={validatePassword} />
-          {!passwordValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>Password must be 6 or more characters</span> : <br />}
-          {signupFailed ? <span style={{ color: 'red' }}>User already exists.</span> : <></>}
-          <br />
-          <button type="submit">Submit</button>
+          <input type="text" name='name' required placeholder="John Doe" onChange={(e) => setName(e.target.value)} onBlur={validatename} />
+          {!nameValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>name must 2 or more characters</span> : <br />}
+          <input type="text" name='email' required placeholder="jdoe@email.com" onChange={(e) => setEmail(e.target.value)} onBlur={validateEmail} />
+          {!emailValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>invalid email</span> : <br />}
+          <input type="password" name='password' required placeholder="123xyz" onChange={(e) => setPassword(e.target.value)} onBlur={validatePassword} />
+          {!passwordValid ? <span style={{ color: 'red', fontSize: '0.8em', display: 'block' }}>password must be 6 or more characters</span> : <br />}
+          {(signupStatus.status === 'error') ? <span style={{ color: 'red' }}>{signupStatus.message}</span> : <></>}
+          <button type="submit">submit</button>
         </form>
-        <br />
-        <button onClick={handleGoogleAuth}>Signup with Google</button>
-        {googleSignupFailed ? <span style={{ color: 'red' }}>Could not sign in with Google.</span> : <></>}
+        <button onClick={handleGoogleAuth}>signup with google</button>
+        {googleSignupFailed ? <span style={{ color: 'red' }}>could not signup with google.</span> : <></>}
       </div>
     );
   }

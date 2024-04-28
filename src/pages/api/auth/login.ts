@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getErrorData, setSessionCookies } from '@lib/helper';
 import { findOneObject, getDocId } from '@lib/firebase';
 
-const collectionName = 'users';
+const collectionName = 'user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -15,6 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (existingUser) {
           const userId = await getDocId(collectionName, ['email', '==', existingUser.email]);
           const userAuth = await findOneObject('auth', userId);
+          const isAdmin = await findOneObject('admin', userId);
+          if (isAdmin) {
+            existingUser.isAdmin = true;
+          }
           if (userAuth) {
             const saltPepperPassword = rawPassword + existingUser.email + process.env.AUTH_SECRET_KEY;
             await compare(saltPepperPassword, userAuth.password, function (err, result) {

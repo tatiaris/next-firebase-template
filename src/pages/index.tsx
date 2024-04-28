@@ -5,16 +5,14 @@ const Home = (): React.ReactNode => {
   const { session, isGuest } = useContext(SessionContext);
   return !isGuest ? (
     <div style={{ padding: '10px' }}>
-      Logged-in: true
+      logged-in: {session.name}
       <br />
-      Welcome {session.displayName}
-      <br />
-      E-mail: {session.email}
+      e-mail: {session.email}
       <br />
       <img width={50} height={50} src={session.photoURL} alt="" />
     </div>
   ) : (
-    <div style={{ padding: '10px' }}>Logged-in: false</div>
+    <div style={{ padding: '10px' }}>logged-in: false</div>
   );
 };
 

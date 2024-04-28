@@ -1,4 +1,4 @@
-import { DocumentData, WhereFilterOp } from '@google-cloud/firestore';
+import { WhereFilterOp } from '@google-cloud/firestore';
 import fs from 'firebase-admin';
 
 if (fs.apps.length === 0) {
@@ -15,20 +15,36 @@ export const getDocId = async (colName: string, query: [string, WhereFilterOp, s
   return snapshot.docs[0].id;
 };
 
-export const findOneObject = async (colName: string, id: string = null, query: [string, WhereFilterOp, string] = null) => {
+export const findOneObject = async (colName: string, id: string = null, query: [string, WhereFilterOp, string] = null): Promise<any> => {
   const byId = id && id.length > 0;
-  const ref = (byId ? db.collection(colName).doc(id) : db.collection(colName)) as DocumentData;
-  const snapshot = await (byId ? ref.get() : ref.where(query[0], query[1], query[2]).get());
-  const snapshotExists = (snapshot.empty !== undefined && !snapshot.empty) || snapshot.exists;
-  return snapshotExists ? (byId ? { ...snapshot.data(), id: snapshot.id } : { ...snapshot.docs[0].data(), id: snapshot.docs[0].id }) : null;
-};
+  if (!byId && !query) {
+    throw new Error("Invalid query parameters");
+  }
+  else if (byId) {
+    const ref = db.collection(colName).doc(id);
+    const snapshot = await ref.get();
+    return snapshot.exists ? { ...snapshot.data(), id: snapshot.id } : null;
+  }
+  else {
+    const ref = db.collection(colName).where(query[0], query[1], query[2]);
+    const snapshot = await ref.get();
+    return snapshot.empty ? null : { ...snapshot.docs[0].data(), id: snapshot.docs[0].id };
+  }
+}
 
 export const insertOneObject = async (colName: string, newObject: any, id: string = null) => {
   const byId = id && id.length > 0;
-  const ref = (byId ? db.collection(colName).doc(id) : db.collection(colName)) as DocumentData;
-  const res = await (byId ? ref.set(newObject) : ref.add(newObject));
-  return res.id !== undefined ? res.id : null;
-};
+  if (byId) {
+    const ref = db.collection(colName).doc(id);
+    await ref.set(newObject);
+    return id;
+  }
+  else {
+    const ref = db.collection(colName);
+    const res = await ref.add(newObject);
+    return res.id;
+  }
+}
 
 export const updateOneObject = async (colName: string, id: string, updatedKeysAndVals) => {
   try {
@@ -68,3 +84,15 @@ export const getAllObjects = async (colName: string) => {
   });
   return allObjs;
 };
+
+export const getSampleData = async () => {
+  const collections = await db.listCollections();
+  const samples = {};
+  for (const col of collections) {
+    const snapshot = await db.collection(col.id).limit(1).get();
+    snapshot.forEach((obj) => {
+      samples[col.id] = ({ ...obj.data(), id: obj.id });
+    });
+  }
+  return samples;
+}

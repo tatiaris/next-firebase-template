@@ -66,6 +66,22 @@ export const getOneFromDatabase = async (collection: string, id: string) => {
   return resData;
 };
 
+export const queryOneFromDatabase = async (collection: string, key: string, value: string) => {
+  const res = await fetch(`/api/admin/${collection}/query`, {
+    method: 'POST',
+    headers: headers['POST'],
+    body: JSON.stringify({ key, value })
+  });
+  const resJson = res.json();
+  return resJson;
+}
+
+export const getSamplesFromDatabase = async () => {
+  const res = await fetch(`/api/admin/samples`);
+  const resData = await res.json();
+  return resData;
+}
+
 /* ALL OBJECTS CRUD */
 
 export const getAllFromDatabase = async (collection: string) => {

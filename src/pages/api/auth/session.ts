@@ -1,19 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { decode } from 'jsonwebtoken';
 import { findOneObject } from '@lib/firebase';
+import { isAdmin } from '@lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
       const auth = decode(req.cookies.auth);
-      const user = await findOneObject('users', auth['id']);
+      const admin = await isAdmin(req.cookies.auth);
+      const user = await findOneObject('user', auth['id']);
+      if (admin) {
+        user.isAdmin = true;
+      }
       res.status(200).json({ success: true, session: user });
     } catch (error) {
       res.status(200).json({
         success: true,
         session: {
           id: `guest-${Date.now()}`,
-          username: '',
+          name: '',
           email: '',
           photoURL: ''
         }

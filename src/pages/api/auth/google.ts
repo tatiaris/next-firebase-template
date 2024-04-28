@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getErrorData, setSessionCookies } from '@lib/helper';
 import { findOneObject, insertOneObject } from '@lib/firebase';
 
-const collectionName = 'users';
+const collectionName = 'user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -11,11 +11,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (googleUser) {
         const existingUser = await findOneObject(collectionName, null, ['email', '==', googleUser.email]);
         if (existingUser) {
+          const isAdmin = await findOneObject('admin', existingUser.id);
+          if (isAdmin) {
+            existingUser.isAdmin = true;
+          }
           setSessionCookies(res, existingUser.id, existingUser);
           res.json({ success: true, data: 'Welcome back!' });
         } else {
           const newUser = {
-            displayName: googleUser.displayName,
+            name: googleUser.displayName,
             email: googleUser.email,
             photoURL: googleUser.photoURL
           };

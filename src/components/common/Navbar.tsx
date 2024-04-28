@@ -19,7 +19,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
   };
 
   return (
-    <div style={{ padding: 10, display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid black' }}>
+    <div id='navbar'>
       <div id="links-container" style={{ display: 'flex', gap: 10 }}>
         {navLinks.map((link) => (
           <Link href={link.link} key={link.link}>
@@ -31,16 +31,16 @@ export const Navbar: React.FC = (): React.ReactElement => {
         {isGuest ? (
           <div>
             <Link href="/login" passHref>
-              Login
+              login
             </Link>
             {' / '}
             <Link href="/signup" passHref>
-              Signup
+              signup
             </Link>
           </div>
         ) : (
           <div>
-            <button onClick={handleLogout}>Log Out</button>
+            <button onClick={handleLogout}>log out</button>
           </div>
         )}
       </div>

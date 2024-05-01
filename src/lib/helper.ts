@@ -1,4 +1,4 @@
-import { headers } from '@components/constants';
+import { headers } from 'src/lib/constants';
 import { decode } from 'jsonwebtoken';
 import { Session } from './types';
 
@@ -74,45 +74,45 @@ export const queryOneFromDatabase = async (collection: string, key: string, valu
   });
   const resJson = res.json();
   return resJson;
-}
+};
 
 export const getSamplesFromDatabase = async () => {
   const res = await fetch(`/api/admin/samples`);
   const resData = await res.json();
   return resData;
-}
+};
 
 /* ALL OBJECTS CRUD */
 
-export const getAllFromDatabase = async (collection: string) => {
+export const getAllFromCollection = async (collection: string) => {
   const collectionResponse = await fetch(`/api/admin/${collection}`);
   const collectionData = await collectionResponse.json();
   return collectionData ? collectionData : null;
 };
 
-export const updateAllInDatabase = async (collection: string, updatedKeysAndVals: any) => {
+export const updateAllInCollection = async (collection: string, updatedKeysAndVals: any) => {
   return null;
 };
 
-export const deleteAllFromDatabase = async (collection: string) => {
+export const deleteAllFromCollection = async (collection: string) => {
   return null;
 };
 
 /* MULTIPLE OBJECTS CRUD */
 
-export const addMultipleToDatabase = async (collection: string, newObject: any) => {
+export const addMultipleToCollection = async (collection: string, newObjects: any[]) => {
   return null;
 };
 
-export const updateMultipleInDatabase = async (collection: string, objectId: string, updatedKeysAndVals: any) => {
+export const updateMultipleInCollection = async (collection: string, objectIds: string[], updatedKeysAndVals: any[]) => {
   return null;
 };
 
-export const deleteMultipleFromDatabase = async (collection: string, id: string) => {
+export const deleteMultipleFromCollection = async (collection: string, ids: string[]) => {
   return null;
 };
 
-export const getMultipleFromDatabase = async (collection: string, id: string) => {
+export const getMultipleFromCollection = async (collection: string, id: string) => {
   return null;
 };
 

@@ -1,15 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
-import { logout } from '@components/helper';
+import { logout } from 'src/lib/helper';
 import { useState } from 'react';
 import { SessionContext } from '@hooks/useSessionContext';
-import { navLinks } from '@components/constants';
+import { navLinks } from 'src/lib/constants';
+import { LoggerContext } from '@util/logger';
 
 /**
  * Navbar component
  */
 
 export const Navbar: React.FC = (): React.ReactElement => {
+  const logger = useContext(LoggerContext);
   const [logoutFailed, setLogoutFailed] = useState(false);
   const { isGuest, setSession } = useContext(SessionContext);
   const handleLogout = async () => {
@@ -18,8 +20,18 @@ export const Navbar: React.FC = (): React.ReactElement => {
     else setSession(null);
   };
 
+  useEffect(() => {
+    if (logoutFailed) {
+      logger.log('Logout failed, trying again in 5 seconds...');
+      setLogoutFailed(false);
+      setTimeout(() => {
+        handleLogout();
+      }, 5000);
+    }
+  }, [logoutFailed]);
+
   return (
-    <div id='navbar'>
+    <div id="navbar">
       <div id="links-container" style={{ display: 'flex', gap: 10 }}>
         {navLinks.map((link) => (
           <Link href={link.link} key={link.link}>

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { login, navigatePath } from '@components/helper';
+import { login, navigatePath } from 'src/lib/helper';
 import { signInWithGoogle } from '@util/firebase';
 import { SessionContext } from '@hooks/useSessionContext';
 
@@ -9,7 +9,7 @@ const Login = (): React.ReactNode => {
   const [password, setPassword] = useState('');
   const [loginStatus, setLoginStatus] = useState({
     status: '',
-    message: '',
+    message: ''
   });
   const [googleSignupFailed, setGoogleSignupFailed] = useState(false);
 
@@ -34,10 +34,10 @@ const Login = (): React.ReactNode => {
     return (
       <div style={{ padding: 10 }}>
         <form onSubmit={handleLogin}>
-          <input type="text" name='email' required placeholder="your@email.com" onChange={(e) => setEmail(e.target.value)} />
+          <input type="text" name="email" required placeholder="your@email.com" onChange={(e) => setEmail(e.target.value)} />
           <br />
           <input type="password" required placeholder="123xyz" onChange={(e) => setPassword(e.target.value)} />
-          {(loginStatus.status === "error") ? <span style={{ color: 'red' }}>{loginStatus.message}</span> : <></>}
+          {loginStatus.status === 'error' ? <span style={{ color: 'red' }}>{loginStatus.message}</span> : <></>}
           <br />
           <button type="submit">submit</button>
         </form>

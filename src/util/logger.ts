@@ -1,4 +1,4 @@
-import { Session } from '@components/types';
+import { Session } from 'src/lib/types';
 import { createContext } from 'react';
 
 class Logger {

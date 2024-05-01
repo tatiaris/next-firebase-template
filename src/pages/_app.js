@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Header } from '@components/common/Header';
-import { Navbar } from '@components/common/Navbar';
-import { Footer } from '@components/common/Footer';
-import { getSession } from '@components/helper';
+import { Header } from '@components/Header';
+import { Navbar } from '@components/Navbar';
+import { Footer } from '@components/Footer';
+import { getSession } from 'src/lib/helper';
 import { SessionContext } from '@hooks/useSessionContext';
 import { ThemeContext } from '@hooks/useThemeContext';
 import Logger, { LoggerContext } from '@util/logger';
@@ -25,8 +25,7 @@ export default function MyApp({ Component, pageProps }) {
     const theme = localStorage.getItem('theme');
     if (theme) {
       document.body.classList.add(theme);
-    }
-    else {
+    } else {
       localStorage.setItem('theme', 'light');
       document.body.classList.add('light');
     }
@@ -38,8 +37,7 @@ export default function MyApp({ Component, pageProps }) {
       document.body.classList.remove(theme);
       document.body.classList.add(newTheme);
       localStorage.setItem('theme', newTheme);
-    }
-    else {
+    } else {
       document.body.classList.remove(theme);
       document.body.classList.add(theme === 'light' ? 'dark' : 'light');
       localStorage.setItem('theme', theme === 'light' ? 'dark' : 'light');

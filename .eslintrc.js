@@ -34,6 +34,7 @@ module.exports = {
     'react/prop-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     'jsx-a11y/anchor-is-valid': [
       'error',
       {

@@ -1,5 +1,4 @@
-import { addOneToDatabase, deleteOneFromDatabase, queryOneFromDatabase, updateOneInDatabase } from '@components/helper';
-import { collectionSamples } from '@components/types';
+import { addOneToDatabase, deleteOneFromDatabase, queryOneFromDatabase, updateOneInDatabase } from 'src/lib/helper';
 import { SessionContext } from '@hooks/useSessionContext';
 import { LoggerContext } from '@util/logger';
 import { useRouter } from 'next/router';
@@ -29,9 +28,7 @@ export default function CollectionForm() {
       return;
     }
 
-    const keys = Object.keys(collectionSampleObject).filter(
-      (key) => determineInputType(collectionSampleObject[key]) === 'text'
-    );
+    const keys = Object.keys(collectionSampleObject).filter((key) => determineInputType(collectionSampleObject[key]) === 'text');
     setStringAndObjectKeys(keys);
 
     // Fetch data or any other side effects
@@ -51,7 +48,7 @@ export default function CollectionForm() {
     const newValue = type === 'checkbox' ? checked : type === 'number' ? parseInt(value) : value;
 
     const fieldKeys = name.split('.');
-    let updatedFormData = { ...formData };
+    const updatedFormData = { ...formData };
     let currentLevel = updatedFormData;
 
     for (let i = 0; i < fieldKeys.length - 1; i++) {
@@ -158,8 +155,7 @@ export default function CollectionForm() {
       }
       const res = await addOneToDatabase(collection, formData);
       logger.log('adminAdd.handleSubmit', res);
-    }
-    else {
+    } else {
       const res = await updateOneInDatabase(collection, searchResult.id, formData);
       logger.log('adminUpdate.handleSubmit', res);
     }
@@ -170,12 +166,11 @@ export default function CollectionForm() {
     if (!searchResult || !searchResult.id) {
       logger.log('please find an object before deleting');
       return;
-    }
-    else {
+    } else {
       const res = await deleteOneFromDatabase(collection, searchResult.id);
       logger.log('adminUpdate.handleDelete', res);
     }
-  }
+  };
 
   return (
     <div style={{ padding: 10 }}>
@@ -192,21 +187,23 @@ export default function CollectionForm() {
               ))}
             </select>
             <input type="text" placeholder="Search value" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-            <button type="submit" style={{ marginLeft: 10 }}>find {collection}</button>
+            <button type="submit" style={{ marginLeft: 10 }}>
+              find {collection}
+            </button>
           </form>
           {searchResult && Object.keys(searchResult).length > 0 ? (
             <pre>
-              <code>
-                {JSON.stringify(searchResult, null, 2)}
-              </code>
+              <code>{JSON.stringify(searchResult, null, 2)}</code>
             </pre>
           ) : (
             <span style={{ color: 'red', display: 'block' }}>no {collection} found</span>
           )}
-          {(searchResult && searchResult.id) ? (
+          {searchResult && searchResult.id ? (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <button onClick={() => setSearchResult(null)}>clear</button>
-              <button style={{ borderColor: 'red', color: 'red' }} onClick={handleDelete}>delete {collection}</button>
+              <button style={{ borderColor: 'red', color: 'red' }} onClick={handleDelete}>
+                delete {collection}
+              </button>
             </div>
           ) : (
             <></>
@@ -214,13 +211,15 @@ export default function CollectionForm() {
         </div>
         <div>
           {searchResult && searchResult.id ? (
-            <h3>updating {collection} {searchResult.id}</h3>
+            <h3>
+              updating {collection} {searchResult.id}
+            </h3>
           ) : (
             <h3>adding new {collection}</h3>
           )}
           <form onSubmit={handleSubmit}>
             {renderFields(collectionSampleObject)}
-            <button type="submit">{(searchResult && searchResult.id) ? `update ${collection}` : `add ${collection}`}</button>
+            <button type="submit">{searchResult && searchResult.id ? `update ${collection}` : `add ${collection}`}</button>
             {errorMessage && <span style={{ color: 'red', display: 'block' }}>{errorMessage}</span>}
           </form>
         </div>

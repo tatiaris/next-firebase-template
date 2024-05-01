@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL } from 'firebase/storage';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { headers } from '@components/constants';
-import { navigatePath } from '@components/helper';
+import { headers } from 'src/lib/constants';
+import { navigatePath } from 'src/lib/helper';
 
 const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string);
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { config } from '@components/config';
+import { config } from 'src/config';
 
 /**
  * Header component

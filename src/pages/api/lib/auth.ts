@@ -1,6 +1,7 @@
 import { decode, verify } from 'jsonwebtoken';
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { findOneObject } from '@lib/firebase';
+import { getErrorData } from './helper';
 
 export const isAdmin = async (auth: string) => {
   const decoded = decode(auth);
@@ -14,9 +15,9 @@ const isSelf = (auth: string, id: string) => {
 };
 
 export const authenticated = (fn: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
-  verify(req.cookies.auth, process.env.AUTH_TOKEN, async function (err, decoded) {
+  await verify(req.cookies.auth, process.env.AUTH_TOKEN, async function (err, decoded) {
     if (!err && decoded) {
-      fn(req, res);
+      await fn(req, res);
     } else {
       res.status(401).json({ success: false, data: 'You are not authenticated' });
     }
@@ -24,11 +25,17 @@ export const authenticated = (fn: NextApiHandler) => async (req: NextApiRequest,
 };
 
 export const adminAuthorized = (fn: NextApiHandler) => async (req: NextApiRequest, res: NextApiResponse) => {
-  const hasAdminAccess = await isAdmin(req.cookies.auth);
-  if (hasAdminAccess) {
-    fn(req, res);
-  } else {
-    res.status(403).json({ success: false, data: 'You are not authorized' });
+  try {
+    const hasAdminAccess = await isAdmin(req.cookies.auth);
+    if (hasAdminAccess) {
+      await fn(req, res);
+    } else {
+      res.status(403).json({ success: false, data: 'You are not authorized' });
+    }
+  } catch (error) {
+    const errorObj = error as Error;
+    const errorData = getErrorData(errorObj);
+    res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
   }
 };
 

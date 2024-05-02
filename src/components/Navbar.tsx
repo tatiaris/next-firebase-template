@@ -13,7 +13,7 @@ import { LoggerContext } from '@util/logger';
 export const Navbar: React.FC = (): React.ReactElement => {
   const logger = useContext(LoggerContext);
   const [logoutFailed, setLogoutFailed] = useState(false);
-  const { isGuest, setSession } = useContext(SessionContext);
+  const { isGuest, session, setSession } = useContext(SessionContext);
   const handleLogout = async () => {
     const data = await logout();
     if (!data.success) setLogoutFailed(true);
@@ -33,11 +33,19 @@ export const Navbar: React.FC = (): React.ReactElement => {
   return (
     <div id="navbar">
       <div id="links-container" style={{ display: 'flex', gap: 10 }}>
-        {navLinks.map((link) => (
-          <Link href={link.link} key={link.link}>
-            {link.label}
-          </Link>
-        ))}
+        {navLinks.map((link) =>
+          link.adminOnly ? (
+            session?.isAdmin && (
+              <Link href={link.link} key={link.link}>
+                {link.label}
+              </Link>
+            )
+          ) : (
+            <Link href={link.link} key={link.link}>
+              {link.label}
+            </Link>
+          )
+        )}
       </div>
       <div id="actions-container">
         {isGuest ? (

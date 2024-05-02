@@ -25,6 +25,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+main {
+  min-height: 90vh;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
@@ -78,8 +82,7 @@ label {
 }
 
 select {
-  min-width: 150px;
-  margin-right: 10px;
+  margin: 5px 0px;
   border: 1px solid var(--regular-text-color);
   background-color: var(--main-bg-color);
   color: var(--regular-text-color);
@@ -87,6 +90,11 @@ select {
 
 select:focus-visible {
   outline: none;
+}
+
+textarea {
+  background-color: var(--main-bg-color);
+  color: var(--regular-text-color);
 }
 
 #navbar {

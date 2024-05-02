@@ -55,7 +55,9 @@ export default function MyApp({ Component, pageProps }) {
         <ThemeContext.Provider value={{ setTheme }}>
           <Header />
           <Navbar />
-          <Component {...pageProps} />
+          <main>
+            <Component {...pageProps} />
+          </main>
           <Footer />
         </ThemeContext.Provider>
       </SessionContext.Provider>

@@ -11,11 +11,11 @@ export const navLinks = [
   {
     link: '/',
     label: 'home',
-    links: null
+    adminOnly: false
   },
   {
     link: '/admin',
     label: 'admin',
-    links: null
+    adminOnly: true
   }
 ];

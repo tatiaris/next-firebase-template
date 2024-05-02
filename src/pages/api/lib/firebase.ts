@@ -18,19 +18,17 @@ export const getDocId = async (colName: string, query: [string, WhereFilterOp, s
 export const findOneObject = async (colName: string, id: string = null, query: [string, WhereFilterOp, string] = null): Promise<any> => {
   const byId = id && id.length > 0;
   if (!byId && !query) {
-    throw new Error("Invalid query parameters");
-  }
-  else if (byId) {
+    throw new Error('Invalid query parameters');
+  } else if (byId) {
     const ref = db.collection(colName).doc(id);
     const snapshot = await ref.get();
     return snapshot.exists ? { ...snapshot.data(), id: snapshot.id } : null;
-  }
-  else {
+  } else {
     const ref = db.collection(colName).where(query[0], query[1], query[2]);
     const snapshot = await ref.get();
     return snapshot.empty ? null : { ...snapshot.docs[0].data(), id: snapshot.docs[0].id };
   }
-}
+};
 
 export const insertOneObject = async (colName: string, newObject: any, id: string = null) => {
   const byId = id && id.length > 0;
@@ -38,13 +36,12 @@ export const insertOneObject = async (colName: string, newObject: any, id: strin
     const ref = db.collection(colName).doc(id);
     await ref.set(newObject);
     return id;
-  }
-  else {
+  } else {
     const ref = db.collection(colName);
     const res = await ref.add(newObject);
     return res.id;
   }
-}
+};
 
 export const updateOneObject = async (colName: string, id: string, updatedKeysAndVals) => {
   try {
@@ -91,8 +88,8 @@ export const getSampleData = async () => {
   for (const col of collections) {
     const snapshot = await db.collection(col.id).limit(1).get();
     snapshot.forEach((obj) => {
-      samples[col.id] = ({ ...obj.data(), id: obj.id });
+      samples[col.id] = { ...obj.data(), id: obj.id };
     });
   }
   return samples;
-}
+};

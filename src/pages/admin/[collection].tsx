@@ -1,8 +1,9 @@
-import { addOneToDatabase, deleteOneFromDatabase, queryOneFromDatabase, updateOneInDatabase } from 'src/lib/helper';
+import { addOneToDatabase, deleteOneFromDatabase, queryOneFromDatabase, refreshPage, updateOneInDatabase } from 'src/lib/helper';
 import { SessionContext } from '@hooks/useSessionContext';
 import { LoggerContext } from '@util/logger';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
+import Loading from '@components/Loading';
 
 export default function CollectionForm() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function CollectionForm() {
   const [searchValue, setSearchValue] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [newObjectUploadErrorMessage, setNewObjectUploadErrorMessage] = useState('');
 
   useEffect(() => {
     if (!session || !session.isAdmin) {
@@ -40,7 +42,9 @@ export default function CollectionForm() {
       const data = await res.json();
       setCollectionSampleObject(data.data[collection]);
     };
-    fetchSamples();
+    if (collection && collection.length > 0) {
+      fetchSamples();
+    }
   }, [collection]);
 
   const handleInputChange = (e) => {
@@ -172,13 +176,51 @@ export default function CollectionForm() {
     }
   };
 
+  const handleNewObjectUpload = async (e) => {
+    e.preventDefault();
+    try {
+      const object = JSON.parse(e.target.object.value);
+      if (!object || typeof object !== 'object' || Object.keys(object).length === 0) {
+        throw new Error('Invalid object');
+      } else {
+        setNewObjectUploadErrorMessage('');
+        const res = await addOneToDatabase(collection, object);
+        logger.log('adminAdd.handleNewObjectUpload', res);
+        refreshPage();
+      }
+    } catch (error) {
+      setNewObjectUploadErrorMessage('Invalid object');
+    }
+  };
+
+  if (collectionSampleObject && Object.keys(collectionSampleObject).length === 0) {
+    return <Loading />;
+  }
+
+  if (!collectionSampleObject) {
+    return (
+      <div style={{ padding: 10 }}>
+        <span>
+          collection <i>{collection}</i> not found
+        </span>
+        <br />
+        <br />
+        <form onSubmit={handleNewObjectUpload}>
+          <textarea placeholder={`enter sample ${collection} object:\n\n{\n  "key": "value"\n}`} name="object" id="object" rows={20} style={{ width: '99%' }} />
+          <button type="submit">create {collection}</button>
+        </form>
+        {newObjectUploadErrorMessage && <span style={{ color: 'red', display: 'block' }}>{newObjectUploadErrorMessage}</span>}
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: 10 }}>
-      <h2 style={{ textAlign: 'center' }}>{collection}</h2>
-      <div style={{ display: 'flex', gap: 50, justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
+      <h2>{collection}</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 50, flexWrap: 'wrap' }}>
         <div>
-          <form onSubmit={handleFindObject}>
-            <select value={searchField} onChange={(e) => setSearchField(e.target.value)} style={{ padding: 3 }}>
+          <form onSubmit={handleFindObject} style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <select value={searchField} onChange={(e) => setSearchField(e.target.value)}>
               <option value="">select a field</option>
               {stringAndObjectKeys.map((key) => (
                 <option key={key} value={key}>
@@ -187,9 +229,7 @@ export default function CollectionForm() {
               ))}
             </select>
             <input type="text" placeholder="Search value" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} />
-            <button type="submit" style={{ marginLeft: 10 }}>
-              find {collection}
-            </button>
+            <button type="submit">find {collection}</button>
           </form>
           {searchResult && Object.keys(searchResult).length > 0 ? (
             <pre>

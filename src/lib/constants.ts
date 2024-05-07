@@ -19,3 +19,9 @@ export const navLinks = [
     adminOnly: true
   }
 ];
+
+export enum Collections {
+  User = 'user',
+  Auth = 'auth',
+  Admin = 'admin'
+}

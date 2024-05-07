@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getErrorData, setSessionCookies } from '@lib/helper';
 import { findOneObject, insertOneObject } from '@lib/firebase';
+import { Collections } from '@lib/constants';
 
-const collectionName = 'user';
+const collectionName = Collections.User;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {

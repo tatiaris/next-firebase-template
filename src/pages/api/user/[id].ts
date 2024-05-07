@@ -2,8 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { findOneObject, updateOneObject, deleteOneObject } from '@lib/firebase';
 import { authenticated, selfAuthorized } from '@lib/auth';
 import { getErrorData } from '@lib/helper';
+import { Collections } from '@lib/constants';
 
-const collectionName = 'user';
+const collectionName = Collections.User;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   authenticated(

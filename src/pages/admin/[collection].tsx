@@ -193,6 +193,8 @@ export default function CollectionForm() {
     }
   };
 
+  if (!session || !session.isAdmin) return <div style={{ padding: 10 }}>unauthorized</div>;
+
   if (collectionSampleObject && Object.keys(collectionSampleObject).length === 0) {
     return <Loading />;
   }

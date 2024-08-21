@@ -1,86 +1,19 @@
-import { WhereFilterOp } from '@google-cloud/firestore';
 import fs from 'firebase-admin';
+import { DocumentData, Firestore, QuerySnapshot, WhereFilterOp } from '@google-cloud/firestore';
+import { UserObjectDB } from 'src/lib/types';
+import { Collections } from 'src/lib/constants';
 
 if (fs.apps.length === 0) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
   fs.initializeApp({
-    credential: fs.credential.cert(serviceAccount)
+    credential: fs.credential.cert(serviceAccount),
+    storageBucket: 'rekkit-app.appspot.com'
   });
 }
 
-const db = fs.firestore();
+// const db = fs.firestore();
 
-export const getDocId = async (colName: string, query: [string, WhereFilterOp, string]) => {
-  const snapshot = await db.collection(colName).where(query[0], query[1], query[2]).get();
-  return snapshot.docs[0].id;
-};
-
-export const findOneObject = async (colName: string, id: string = null, query: [string, WhereFilterOp, string] = null): Promise<any> => {
-  const byId = id && id.length > 0;
-  if (!byId && !query) {
-    throw new Error('Invalid query parameters');
-  } else if (byId) {
-    const ref = db.collection(colName).doc(id);
-    const snapshot = await ref.get();
-    return snapshot.exists ? { ...snapshot.data(), id: snapshot.id } : null;
-  } else {
-    const ref = db.collection(colName).where(query[0], query[1], query[2]);
-    const snapshot = await ref.get();
-    return snapshot.empty ? null : { ...snapshot.docs[0].data(), id: snapshot.docs[0].id };
-  }
-};
-
-export const insertOneObject = async (colName: string, newObject: any, id: string = null) => {
-  const byId = id && id.length > 0;
-  if (byId) {
-    const ref = db.collection(colName).doc(id);
-    await ref.set(newObject);
-    return id;
-  } else {
-    const ref = db.collection(colName);
-    const res = await ref.add(newObject);
-    return res.id;
-  }
-};
-
-export const updateOneObject = async (colName: string, id: string, updatedKeysAndVals) => {
-  try {
-    const ref = db.collection(colName).doc(id);
-    const resId = await ref.update(updatedKeysAndVals);
-    return resId;
-  } catch (error) {
-    throw Error(`406 - Object not found ${id}`);
-  }
-};
-
-export const deleteOneObject = async (colName: string, id: string) => {
-  try {
-    const ref = db.collection(colName).doc(id);
-    const res = await ref.delete();
-    return res;
-  } catch (error) {
-    throw Error(`406 - Object not found ${id}`);
-  }
-};
-
-export const deepDeleteOneObject = async (colName: string, id: string) => {
-  try {
-    const ref = db.collection(colName).doc(id);
-    const res = await ref.delete();
-    return res;
-  } catch (error) {
-    throw Error(`406 - Object not found ${id}`);
-  }
-};
-
-export const getAllObjects = async (colName: string) => {
-  const snapshot = await db.collection(colName).get();
-  const allObjs = [];
-  snapshot.forEach((obj) => {
-    allObjs.push({ ...obj.data(), id: obj.id });
-  });
-  return allObjs;
-};
+export const db: Firestore = fs.firestore();
 
 export const getSampleData = async () => {
   const collections = await db.listCollections();
@@ -92,4 +25,118 @@ export const getSampleData = async () => {
     });
   }
   return samples;
+};
+
+export const getDocId = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
+  const snapshot = await db.collection(colName).where(field, operator, value).get();
+  return snapshot.docs[0].id;
+};
+
+export const getIdByField = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
+  const snapshot = await db.collection(colName).where(field, operator, value).get();
+  return snapshot.docs[0].id;
+};
+
+export const addObjectToCollection = async (col: string, obj: object) => {
+  const docRef = await db.collection(col).add(obj);
+  return docRef.id;
+};
+
+export const getCollection = async (col: string): Promise<QuerySnapshot<DocumentData>> => {
+  const snapshot = await db.collection(col).get();
+  return snapshot;
+};
+
+export const addObjectWithId = async (col: string, obj: object) => {
+  const id = db.collection(col).doc().id;
+  await db
+    .collection(col)
+    .doc(id)
+    .set({ ...obj, id });
+  return id;
+};
+
+export const setObjectById = async (col: string, id: string, obj: object) => {
+  await db.collection(col).doc(id).set(obj);
+};
+
+export const getCount = async (col: string): Promise<number> => {
+  const snapshot = await db.collection(col).get();
+  return snapshot.size;
+};
+
+export const updateObjectById = async (colName: string, id: string, updatedValues: object) => {
+  await db.collection(colName).doc(id).update(updatedValues);
+};
+
+export const updateOrAddObjectById = async (colName: string, id: string, updatedValues: object) => {
+  // check if the document exists
+  const doc = await db.collection(colName).doc(id).get();
+  if (!doc.exists) {
+    await setObjectById(colName, id, updatedValues);
+  }
+  await db.collection(colName).doc(id).update(updatedValues);
+};
+
+export const deleteDocById = async (col: string, id: string) => {
+  // check if the document exists
+  const doc = await db.collection(col).doc(id).get();
+  if (!doc.exists) {
+    return;
+  }
+  await db.collection(col).doc(id).delete();
+};
+
+export const deleteDocsByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
+  const snapshot = await db.collection(colName).where(field, operator, value).get();
+  if (snapshot.empty) {
+    return;
+  }
+  const batch = db.batch();
+  snapshot.docs.forEach((doc) => {
+    batch.delete(doc.ref);
+  });
+  await batch.commit();
+};
+
+export const findObjectsByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
+  const snapshot = await db.collection(colName).where(field, operator, value).get();
+  return snapshot.docs.map((doc) => doc.data());
+};
+
+export const findObjectByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any): Promise<object | null> => {
+  const snapshot: QuerySnapshot<DocumentData> = await db.collection(colName).where(field, operator, value).limit(1).get();
+
+  if (!snapshot.empty) {
+    const doc = snapshot.docs[0];
+    return { ...doc.data(), id: doc.id };
+  } else {
+    return null;
+  }
+};
+
+export const findObjectById = async (colName: string, id: string): Promise<object | null> => {
+  const snapshot = await db.collection(colName).doc(id).get();
+  const data = snapshot.exists
+    ? snapshot.data()
+    : colName === Collections.User
+      ? ({
+          id,
+          username: 'deleted_user',
+          name: 'Deleted User',
+          picture: 'https://via.placeholder.com/150'
+        } as UserObjectDB)
+      : null;
+  return data;
+};
+
+export const deleteCollection = async (colName: string) => {
+  const snapshot = await db.collection(colName).get();
+  snapshot.docs.forEach((doc) => {
+    doc.ref.delete();
+  });
+};
+
+export const deleteFile = async (path: string) => {
+  await fs.storage().bucket().file(path).delete();
 };

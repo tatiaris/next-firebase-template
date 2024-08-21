@@ -2,24 +2,24 @@ import { useEffect, useState } from 'react';
 import { Header } from '@components/Header';
 import { Navbar } from '@components/Navbar';
 import { Footer } from '@components/Footer';
-import { getSession } from 'src/lib/helper';
-import { SessionContext } from '@hooks/useSessionContext';
-import { ThemeContext } from '@hooks/useThemeContext';
 import Logger, { LoggerContext } from '@util/logger';
+import { SessionContext, useSession } from '@hooks/useSession';
+import { APIContext, useAPI } from '@hooks/useAPI.ts';
+import { CacheContext, useCache } from '@hooks/useCache';
+import { ThemeContext } from '@hooks/useTheme';
+
 import '@styles/index.css';
 
 export default function MyApp({ Component, pageProps }) {
+  const api = useAPI();
+  const sessionData = useSession(api);
+  const cache = useCache();
   const [session, setSession] = useState(null);
   const logger = new Logger();
 
   useEffect(() => {
     logger.setSession(session);
   }, [session]);
-
-  async function fetchSession() {
-    const currSession = await getSession();
-    setSession(currSession);
-  }
 
   function setInitialTheme() {
     const theme = localStorage.getItem('theme');
@@ -45,7 +45,6 @@ export default function MyApp({ Component, pageProps }) {
   }
 
   useEffect(() => {
-    fetchSession();
     setInitialTheme();
   }, []);
 

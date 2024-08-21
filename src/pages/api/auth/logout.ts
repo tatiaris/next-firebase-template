@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getErrorData, deleteSessionCookies } from '@lib/helper';
-import { authenticated } from '@lib/auth';
+import { getErrorData } from '@lib/helper';
+import { authenticated, deleteSessionCookies } from '@lib/auth';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {

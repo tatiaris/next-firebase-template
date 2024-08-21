@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { navigatePath, signupUser } from 'src/lib/helper';
 import { signInWithGoogle } from '@util/firebase';
-import { SessionContext } from '@hooks/useSessionContext';
+import { SessionContext } from '@hooks/useSession';
 
 const Signup = (): React.ReactNode => {
   const { isGuest } = useContext(SessionContext);

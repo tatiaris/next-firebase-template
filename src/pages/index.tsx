@@ -1,4 +1,4 @@
-import { SessionContext } from '@hooks/useSessionContext';
+import { SessionContext } from '@hooks/useSession';
 import React, { useContext } from 'react';
 
 const Home = (): React.ReactNode => {

@@ -1,4 +1,4 @@
-import { ThemeContext } from '@hooks/useThemeContext';
+import { ThemeContext } from '@hooks/useTheme';
 import React, { useContext } from 'react';
 
 /**

@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { logout } from 'src/lib/helper';
 import { useState } from 'react';
-import { SessionContext } from '@hooks/useSessionContext';
 import { navLinks } from 'src/lib/constants';
 import { LoggerContext } from '@util/logger';
+import { SessionContext } from '@hooks/useSession';
 
 /**
  * Navbar component
@@ -14,6 +14,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
   const logger = useContext(LoggerContext);
   const [logoutFailed, setLogoutFailed] = useState(false);
   const { isGuest, session, setSession } = useContext(SessionContext);
+
   const handleLogout = async () => {
     const data = await logout();
     if (!data.success) setLogoutFailed(true);

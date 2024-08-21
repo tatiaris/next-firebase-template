@@ -1,29 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getErrorData } from '@lib/helper';
 import { Collections } from 'src/lib/constants';
-import { addObjectToCollection, getCollection } from '@lib/firebase';
+import { getCollection } from '@lib/firebase';
+import { UserObjectDB } from 'src/lib/types';
+import { DocumentData, QuerySnapshot } from '@google-cloud/firestore';
 
 const collectionName = Collections.User;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     try {
-      const data = await getCollection(collectionName);
+      const usersSnapshot = (await getCollection(Collections.User)) as QuerySnapshot<DocumentData>;
+      const promises = usersSnapshot.docs.map(async (doc) => {
+        const user = doc.data() as UserObjectDB;
+        return user.username;
+      });
+      const data = (await Promise.all(promises)).filter((username) => username !== 'anonymous');
       res.status(200).json({ success: true, message: '', data });
     } catch (error) {
       const errorObj = error as Error;
       const errorData = getErrorData(errorObj);
       res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
     }
-  } else if (req.method === 'POST') {
-    if (req.body.newObject) {
-      const data = await addObjectToCollection(collectionName, req.body.newObject);
-      res.status(200).json({ success: true, message: '', data });
-    } else {
-      res.status(400).json({ success: false, message: '400 - New user data missing', data: req.body });
-    }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

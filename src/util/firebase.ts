@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL, getMetadata, StorageError } from 'firebase/storage';
-import { GoogleAuthProvider, getAuth, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, getAuth, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup, signOut } from 'firebase/auth';
 import { Collections, headers } from 'src/lib/constants';
 import { navigatePath } from 'src/lib/helper';
 import {
@@ -53,23 +53,18 @@ interface UploadFileResponse {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataFunction = (...params: any[]) => Promise<any>;
 
-export const signInWithGoogle = async (redirect = '/home') => {
-  const res = await signInWithPopup(auth, googleProvider);
-  const user = res.user;
-  const credential = GoogleAuthProvider.credentialFromResult(res);
-  const idToken = await user.getIdToken();
-  let data = { success: false, message: 'Something went wrong', data: null };
-  const authRes = await fetch(`/api/auth/google`, {
-    method: 'POST',
-    headers: headers['POST'],
-    body: JSON.stringify({ user, credential: { ...credential, idToken } })
+export const signInWithGoogle = async () => {
+  signInWithPopup(auth, googleProvider).catch((error) => {
+    console.error('Error signInWithGoogle:', error);
+    throw new Error('Could not sign in with Google');
   });
-  const authData = await authRes.json();
-  if (authData.success) {
-    data = authData;
-    navigatePath(redirect);
-  }
-  return data;
+};
+
+export const signOutFromGoogle = async () => {
+  signOut(auth).catch((error) => {
+    console.error('Error signOut:', error);
+    throw new Error('Could not sign out');
+  });
 };
 
 export const signInWithGoogleEmailAuth = async (email: string, redirect = '/home') => {
@@ -84,6 +79,7 @@ export const signInWithGoogleEmailAuth = async (email: string, redirect = '/home
         body: JSON.stringify({ user, credential: { ...credential, idToken } })
       });
       const authData = await authRes.json();
+      console.log('authData:', authData);
       if (authData.success) {
         navigatePath(redirect);
       }

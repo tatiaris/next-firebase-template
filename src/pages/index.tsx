@@ -1,15 +1,16 @@
-import { SessionContext } from '@hooks/useSession';
+import { AuthContext } from '@hooks/useAuth';
 import React, { useContext } from 'react';
 
 const Home = (): React.ReactNode => {
-  const { session, isGuest } = useContext(SessionContext);
+  const { user, isGuest } = useContext(AuthContext);
+
   return !isGuest ? (
     <div style={{ padding: '10px' }}>
-      logged-in: {session.name}
+      logged-in: {user.displayName}
       <br />
-      e-mail: {session.email}
+      e-mail: {user.email}
       <br />
-      <img width={50} height={50} src={session.photoURL} alt="" />
+      <img width={50} height={50} src={user.photoURL} alt="" />
     </div>
   ) : (
     <div style={{ padding: '10px' }}>logged-in: false</div>

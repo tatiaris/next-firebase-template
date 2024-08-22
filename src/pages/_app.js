@@ -3,23 +3,19 @@ import { Header } from '@components/Header';
 import { Navbar } from '@components/Navbar';
 import { Footer } from '@components/Footer';
 import Logger, { LoggerContext } from '@util/logger';
-import { SessionContext, useSession } from '@hooks/useSession';
 import { APIContext, useAPI } from '@hooks/useAPI.ts';
 import { CacheContext, useCache } from '@hooks/useCache';
-import { ThemeContext } from '@hooks/useTheme';
+import { ThemeContext, useTheme } from '@hooks/useTheme';
+import { useAuth, AuthContext } from '@hooks/useAuth';
 
 import '@styles/index.css';
 
 export default function MyApp({ Component, pageProps }) {
   const api = useAPI();
-  const sessionData = useSession(api);
   const cache = useCache();
-  const [session, setSession] = useState(null);
+  const theme = useTheme();
   const logger = new Logger();
-
-  useEffect(() => {
-    logger.setSession(session);
-  }, [session]);
+  const auth = useAuth();
 
   function setInitialTheme() {
     const theme = localStorage.getItem('theme');
@@ -31,35 +27,28 @@ export default function MyApp({ Component, pageProps }) {
     }
   }
 
-  function setTheme(newTheme = null) {
-    const theme = localStorage.getItem('theme');
-    if (newTheme) {
-      document.body.classList.remove(theme);
-      document.body.classList.add(newTheme);
-      localStorage.setItem('theme', newTheme);
-    } else {
-      document.body.classList.remove(theme);
-      document.body.classList.add(theme === 'light' ? 'dark' : 'light');
-      localStorage.setItem('theme', theme === 'light' ? 'dark' : 'light');
-    }
-  }
-
   useEffect(() => {
     setInitialTheme();
   }, []);
 
+  if (auth.isLoading) return <></>;
+
   return (
     <LoggerContext.Provider value={logger}>
-      <SessionContext.Provider value={{ session, setSession, isGuest: session ? session.email.length === 0 : true }}>
-        <ThemeContext.Provider value={{ setTheme }}>
-          <Header />
-          <Navbar />
-          <main>
-            <Component {...pageProps} />
-          </main>
-          <Footer />
-        </ThemeContext.Provider>
-      </SessionContext.Provider>
+      <AuthContext.Provider value={auth}>
+        <APIContext.Provider value={api}>
+          <CacheContext.Provider value={cache}>
+            <ThemeContext.Provider value={theme}>
+              <Header />
+              <Navbar />
+              <main>
+                <Component {...pageProps} />
+              </main>
+              <Footer />
+            </ThemeContext.Provider>
+          </CacheContext.Provider>
+        </APIContext.Provider>
+      </AuthContext.Provider>
     </LoggerContext.Provider>
   );
 }

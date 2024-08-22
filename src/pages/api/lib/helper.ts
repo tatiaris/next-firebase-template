@@ -1,21 +1,7 @@
-import fetch from 'node-fetch';
-import {
-  addObjectToCollection,
-  addObjectWithId,
-  deleteCollection,
-  deleteDocById,
-  deleteDocsByFilter,
-  findObjectByFilter,
-  findObjectById,
-  getCollection,
-  getCount,
-  setObjectById,
-  updateObjectById
-} from './firebase';
-import { UserObjectDB } from 'src/lib/types';
+import { addObjectToCollection, findObjectByFilter } from './firebase';
 import { Collections } from 'src/lib/constants';
 import { Timestamp } from '@google-cloud/firestore';
-import fs, { firestore } from 'firebase-admin';
+import { firestore } from 'firebase-admin';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataFunction = (...params: any[]) => Promise<any>;

@@ -5,10 +5,10 @@ import React, { useContext } from 'react';
  * Footer component
  */
 export const Footer: React.FC = () => {
-  const { setTheme } = useContext(ThemeContext);
+  const { updateTheme } = useContext(ThemeContext);
   return (
     <div id="footer">
-      <button onClick={() => setTheme()}>change theme</button>
+      <button onClick={() => updateTheme()}>change theme</button>
     </div>
   );
 };

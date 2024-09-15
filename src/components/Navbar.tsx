@@ -1,16 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { LoggerContext } from '@util/logger';
 import { signInWithGoogle, signOutFromGoogle } from '@util/firebase';
 import { AuthContext } from '@hooks/useAuth';
+import { useLogger } from '@hooks/useLogger';
 
 /**
  * Navbar component
  */
 
 export const Navbar: React.FC = (): React.ReactElement => {
-  const logger = useContext(LoggerContext);
+  const logger = useLogger();
   const [logoutFailed, setLogoutFailed] = useState(false);
   const { isGuest } = useContext(AuthContext);
 

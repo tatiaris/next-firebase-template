@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 export const CacheContext = createContext<ReturnType<typeof useCache>>({
   cache: {},
@@ -6,12 +6,16 @@ export const CacheContext = createContext<ReturnType<typeof useCache>>({
   updateCache: () => {}
 });
 
-export const useCache = () => {
+export const CacheProvider = ({ children }) => {
   const [cache, setCache] = useState({} as Record<string, any>);
 
   const updateCache = (key: string, value: any) => {
     setCache({ ...cache, [key]: value });
   };
 
-  return { cache, setCache, updateCache };
+  return <CacheContext.Provider value={{ cache, setCache, updateCache }}>{children}</CacheContext.Provider>;
 };
+
+export function useCache() {
+  return useContext(CacheContext);
+}

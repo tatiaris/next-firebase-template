@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface ThemeContextType {
   theme: string;
@@ -12,7 +12,7 @@ export const ThemeContext = createContext<ThemeContextType>({
   updateTheme: () => {}
 });
 
-export const useTheme = () => {
+export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
 
   function updateTheme(newTheme = null) {
@@ -28,5 +28,9 @@ export const useTheme = () => {
     }
   }
 
-  return { theme, setTheme, updateTheme };
+  return <ThemeContext.Provider value={{ theme, setTheme, updateTheme }}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => {
+  return useContext(ThemeContext);
 };

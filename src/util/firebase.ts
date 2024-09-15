@@ -23,13 +23,7 @@ import {
   FirestoreError,
   AggregateQuerySnapshot,
   AggregateField,
-  where,
-  orderBy,
-  startAfter,
-  limit,
-  getFirestore,
-  runTransaction,
-  onSnapshot
+  getFirestore
 } from 'firebase/firestore';
 import { UserObjectDB } from 'src/lib/types';
 
@@ -283,91 +277,6 @@ export const deleteCollection = async (col: string) => {
   await batch.commit();
 };
 
-// Helper function to get a single document from a collection based on a field and its value
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getObjectByField = async (colName: string, field: string, value: any): Promise<object | null> => {
-  const [snapshot, getObjectError] = (await awaitData(getDocs, query(collection(db, colName), where(field, '==', value)))) as [QuerySnapshot, FirestoreError];
-  if (getObjectError) handleFirestoreError('getObjectByField', getObjectError);
-
-  const [firstDoc] = snapshot.docs;
-  return firstDoc ? firstDoc.data() : null;
-};
-
-// Helper function to update a document based on a field and its value
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const updateObjectByField = async (colName: string, field: string, value: any, updatedValues: object) => {
-  const [updateDocError] = (await awaitData(updateDoc, doc(collection(db, colName), ((await getObjectByField(colName, field, value)) as { id: string })?.id), updatedValues)) as [FirestoreError];
-  if (updateDocError) handleFirestoreError('updateObjectByField', updateDocError);
-};
-
-// Helper function to delete a document based on a field and its value
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const deleteObjectByField = async (colName: string, field: string, value: any) => {
-  const docToDelete = (await getObjectByField(colName, field, value)) as { id: string };
-  if (docToDelete) {
-    const [deleteDocError] = (await awaitData(deleteDoc, doc(collection(db, colName), docToDelete.id))) as [FirestoreError];
-    if (deleteDocError) handleFirestoreError('deleteObjectByField', deleteDocError);
-  }
-};
-
-// Helper function to add or update a document based on a field and its value
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const addOrUpdateObjectByField = async (colName: string, field: string, value: any, obj: object) => {
-  const existingDoc = await getObjectByField(colName, field, value);
-
-  if (existingDoc) {
-    await updateObjectByField(colName, field, value, obj);
-  } else {
-    await addObjectToCollection(colName, obj);
-  }
-};
-
-// Helper function to get a paginated collection
-export const getPaginatedCollection = async (colName: string, pageSize: number, startAfterDoc?: DocumentSnapshot) => {
-  const collectionRef = collection(db, colName);
-  const q = query(collectionRef, orderBy('__name__'), startAfter(startAfterDoc), limit(pageSize));
-
-  const [querySnapshot, getPaginatedError] = (await awaitData(getDocs, q)) as [QuerySnapshot, FirestoreError];
-  if (getPaginatedError) handleFirestoreError('getPaginatedCollection', getPaginatedError);
-
-  return {
-    docs: querySnapshot.docs.map((doc) => doc.data()),
-    lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1] || null
-  };
-};
-
-// Helper function to perform a transaction on a document
-export const runFirebaseTransaction = async (colName: string, id: string, transactionCallback: (data: object | null) => object) => {
-  const firestore = getFirestore();
-
-  const result = await runTransaction(firestore, async (transaction) => {
-    const docRef = doc(collection(db, colName), id);
-    const docSnapshot = await transaction.get(docRef);
-    const data = docSnapshot.exists() ? docSnapshot.data() : null;
-
-    const updatedData = transactionCallback(data);
-
-    transaction.set(docRef, updatedData);
-
-    return updatedData;
-  });
-
-  return result;
-};
-
-// Helper function to batch write multiple documents
-export const batchWrite = async (colName: string, data: object[]) => {
-  const batch = writeBatch(db);
-
-  data.forEach((obj: { id: string }) => {
-    const docRef = doc(collection(db, colName), obj.id);
-    batch.set(docRef, obj);
-  });
-
-  const [batchWriteError] = (await awaitData(batch.commit, batch)) as [FirestoreError];
-  if (batchWriteError) handleFirestoreError('batchWrite', batchWriteError);
-};
-
 // Helper function to fetch a document and its subcollections
 export const getDocumentWithSubcollections = async (colName: string, id: string, subcollections: string[]) => {
   const documentRef = doc(db, colName, id);
@@ -392,17 +301,6 @@ export const getDocumentWithSubcollections = async (colName: string, id: string,
   return { ...documentData, ...Object.assign({}, ...subcollectionData) };
 };
 
-// Helper function to listen for real-time updates on a document
-export const subscribeToDocument = (colName: string, id: string, callback: (data: object | null) => void) => {
-  const documentRef = doc(db, colName, id);
-  const unsubscribe = onSnapshot(documentRef, (docSnapshot) => {
-    const data = docSnapshot.exists() ? docSnapshot.data() : null;
-    callback(data);
-  });
-
-  return unsubscribe;
-};
-
 const fetchQueryResults = async (query: QuerySnapshot) => {
   const results: UserObjectDB[] = [];
   query.forEach((doc) => {
@@ -410,38 +308,6 @@ const fetchQueryResults = async (query: QuerySnapshot) => {
     results.push(userData);
   });
   return results;
-};
-
-export const searchUsers = async (searchTerm: string): Promise<UserObjectDB[]> => {
-  if (!searchTerm.trim()) {
-    return [];
-  }
-
-  const searchQuery = searchTerm.trim().toLowerCase();
-  const users: UserObjectDB[] = [];
-
-  try {
-    const usersRef = collection(db, Collections.User);
-
-    const usernameQuery = query(usersRef, where('username', '>=', searchQuery), where('username', '<=', searchQuery + '\uf8ff'));
-
-    const nameQuery = query(usersRef, where('name', '>=', searchQuery), where('name', '<=', searchQuery + '\uf8ff'));
-
-    const [usernameSnapshot, nameSnapshot] = await Promise.all([getDocs(usernameQuery), getDocs(nameQuery)]);
-
-    const usersByUsername = await fetchQueryResults(usernameSnapshot);
-    const usersByName = await fetchQueryResults(nameSnapshot);
-
-    const userIds = new Set(usersByUsername.map((u) => u.id));
-
-    users.push(...usersByUsername);
-    users.push(...usersByName.filter((user) => !userIds.has(user.id)));
-
-    return users;
-  } catch (error) {
-    console.error('Error searching users: ', error);
-    return [];
-  }
 };
 
 export const exists = async (colName: string, id: string): Promise<boolean> => {

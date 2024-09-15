@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
 import { auth } from '@util/firebase';
 
@@ -12,7 +12,7 @@ export const AuthContext = createContext<{
   isGuest: true
 });
 
-export const useAuth = () => {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,9 +23,9 @@ export const useAuth = () => {
     });
   }, []);
 
-  return {
-    user,
-    isLoading,
-    isGuest: !user
-  };
+  return <AuthContext.Provider value={{ user, isLoading, isGuest: !user }}>{children}</AuthContext.Provider>;
 };
+
+export function useAuth() {
+  return useContext(AuthContext);
+}

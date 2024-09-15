@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, createContext } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { and, where } from 'firebase/firestore';
 import { Session, UserObjectDB } from 'src/lib/types';
 import { findObjectsByFilter } from '@util/firebase';
@@ -11,9 +11,14 @@ export const APIContext = createContext<ReturnType<typeof useAPI>>({
   fetchProfileById: async () => null
 });
 
-export type API = ReturnType<typeof useAPI>;
+export type API = {
+  fetchSession: () => Promise<Session>;
+  getUnreadNotificationsCount: () => Promise<number>;
+  fetchProfileByUsername: (username: string) => Promise<UserObjectDB>;
+  fetchProfileById: (id: string) => Promise<UserObjectDB>;
+};
 
-export function useAPI() {
+export function APIProvider({ children }) {
   const fetchIdFromUsername = async (username: string): Promise<string> => {
     const user = (await findObjectsByFilter(Collections.User, and(where('username', '==', username)))) as UserObjectDB[];
     if (user.length === 0) return undefined;
@@ -55,10 +60,9 @@ export function useAPI() {
     return resData.data;
   };
 
-  return {
-    fetchSession,
-    getUnreadNotificationsCount,
-    fetchProfileByUsername,
-    fetchProfileById
-  };
+  return <APIContext.Provider value={{ fetchSession, getUnreadNotificationsCount, fetchProfileByUsername, fetchProfileById }}>{children}</APIContext.Provider>;
+}
+
+export default function useAPI() {
+  return useContext(APIContext);
 }

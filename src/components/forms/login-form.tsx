@@ -62,7 +62,7 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
+                      <Input placeholder="name@example.com" autoComplete="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -74,7 +74,7 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" placeholder="password" {...field} />
+                      <Input type="password" placeholder="password" autoComplete="current-password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

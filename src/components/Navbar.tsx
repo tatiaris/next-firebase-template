@@ -1,15 +1,17 @@
 import React, { useContext, useEffect } from 'react';
-import Link from 'next/link';
 import { useState } from 'react';
-import { signInWithGoogle, signOutFromGoogle } from '@util/firebase';
-import { AuthContext } from '@hooks/useAuth';
-import { useLogger } from '@hooks/useLogger';
+import { Button } from './ui/button';
+import { useRouter } from 'next/router';
+import { signInWithGoogle, signOutFromGoogle } from '@/util/firebase';
+import { useLogger } from '@/hooks/useLogger';
+import { AuthContext } from '@/hooks/useAuth';
 
 /**
  * Navbar component
  */
 
 export const Navbar: React.FC = (): React.ReactElement => {
+  const router = useRouter();
   const logger = useLogger();
   const [logoutFailed, setLogoutFailed] = useState(false);
   const { isGuest } = useContext(AuthContext);
@@ -25,19 +27,21 @@ export const Navbar: React.FC = (): React.ReactElement => {
   }, [logoutFailed]);
 
   return (
-    <div id="navbar">
-      <div id="links-container" style={{ display: 'flex', gap: 10 }}>
-        <Link href={`/`}>{`Home`}</Link>
+    <div className="px-4 py-4 flex justify-between border-b-2 border-zinc">
+      <div className="flex gap-10">
+        <Button variant="link" onClick={() => router.push('/')}>
+          home
+        </Button>
       </div>
-      <div id="actions-container">
+      <div>
         {isGuest ? (
-          <div>
-            <button onClick={signInWithGoogle}>log in</button>
-          </div>
+          <Button variant="outline" onClick={signInWithGoogle}>
+            log in
+          </Button>
         ) : (
-          <div>
-            <button onClick={signOutFromGoogle}>log out</button>
-          </div>
+          <Button variant="outline" onClick={signOutFromGoogle}>
+            log out
+          </Button>
         )}
       </div>
     </div>

@@ -3,9 +3,9 @@ import React from 'react';
 /**
  * Loading component
  */
-export const Loading: React.FC = () => {
+const Loading: React.FC = () => {
   return (
-    <div style={{ padding: 10, textAlign: 'center' }}>
+    <div className="px-4 py-4" style={{ textAlign: 'center' }}>
       <span>loading...</span>
     </div>
   );

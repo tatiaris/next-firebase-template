@@ -1,12 +1,12 @@
-import { Header } from '@components/Header';
-import { Navbar } from '@components/Navbar';
-import { Footer } from '@components/Footer';
-import { LoggerProvider } from '@hooks/useLogger';
-import { AuthProvider } from '@hooks/useAuth';
-import { APIProvider } from '@hooks/useAPI';
-import { CacheProvider } from '@hooks/useCache';
-import { ThemeProvider } from '@hooks/useTheme';
-import '@styles/index.css';
+import { AuthProvider } from '@/hooks/useAuth';
+import { LoggerProvider } from '@/hooks/useLogger';
+import { CacheProvider } from '@/hooks/useCache';
+import { APIProvider } from '@/hooks/useAPI';
+import { ThemeProvider } from '@/hooks/useTheme';
+import Header from '@/components/header';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
+import 'src/global.css';
 
 export default function MyApp({ Component, pageProps }) {
   return (
@@ -15,12 +15,14 @@ export default function MyApp({ Component, pageProps }) {
         <CacheProvider>
           <APIProvider>
             <ThemeProvider>
-              <Header />
-              <Navbar />
-              <main>
-                <Component {...pageProps} />
-              </main>
-              <Footer />
+              <div className="bg-background">
+                <Header />
+                <Navbar />
+                <main className="px-4">
+                  <Component {...pageProps} />
+                </main>
+                <Footer />
+              </div>
             </ThemeProvider>
           </APIProvider>
         </CacheProvider>

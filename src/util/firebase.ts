@@ -1,8 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL, getMetadata, StorageError } from 'firebase/storage';
-import { GoogleAuthProvider, getAuth, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup, signOut } from 'firebase/auth';
-import { Collections, headers } from 'src/lib/constants';
-import { navigatePath } from 'src/lib/helper';
+import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
+import { Collections } from 'src/lib/constants';
 import {
   addDoc,
   collection,
@@ -23,7 +22,8 @@ import {
   FirestoreError,
   AggregateQuerySnapshot,
   AggregateField,
-  getFirestore
+  getFirestore,
+  QueryFieldFilterConstraint
 } from 'firebase/firestore';
 import { UserObjectDB } from 'src/lib/types';
 
@@ -44,14 +44,22 @@ interface UploadFileResponse {
   } | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataFunction = (...params: any[]) => Promise<any>;
 
-export const signInWithGoogle = async () => {
-  signInWithPopup(auth, googleProvider).catch((error) => {
-    console.error('Error signInWithGoogle:', error);
-    throw new Error('Could not sign in with Google');
-  });
+export const signInWithGooglePopup = async () => {
+  await signInWithPopup(auth, googleProvider);
+};
+
+export const signInWithEmailPassword = async (email: string, password: string) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    if (error.code === 'auth/user-not-found') {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      throw error;
+    }
+  }
 };
 
 export const signOutFromGoogle = async () => {
@@ -61,52 +69,6 @@ export const signOutFromGoogle = async () => {
   });
 };
 
-export const signInWithGoogleEmailAuth = async (email: string, redirect = '/home') => {
-  signInWithEmailLink(auth, email, window.location.href)
-    .then(async (res) => {
-      const user = res.user;
-      const credential = GoogleAuthProvider.credentialFromResult(res);
-      const idToken = await user.getIdToken();
-      const authRes = await fetch(`/api/auth/google`, {
-        method: 'POST',
-        headers: headers['POST'],
-        body: JSON.stringify({ user, credential: { ...credential, idToken } })
-      });
-      const authData = await authRes.json();
-      console.log('authData:', authData);
-      if (authData.success) {
-        navigatePath(redirect);
-      }
-    })
-    .catch((error) => {
-      console.error('Error signInWithGoogleEmailAuth:', error);
-    });
-};
-
-export const sendSignInWithEmailLink = async (email: string, setEmailSent: React.Dispatch<React.SetStateAction<boolean>>, redirect = '/') => {
-  const actionCodeSettings = {
-    // URL you want to redirect back to. The domain (www.example.com) for this
-    // URL must be in the authorized domains list in the Firebase Console.
-    url: process.env.NEXT_PUBLIC_BASE_URL + redirect + '?email=' + email,
-    // This must be true.
-    handleCodeInApp: true
-  };
-  sendSignInLinkToEmail(auth, email, actionCodeSettings)
-    .then(() => {
-      // The link was successfully sent. Inform the user.
-      setEmailSent(true);
-      // Save the email locally so you don't need to ask the user for it again
-      // if they open the link on the same device.
-      window.localStorage.setItem('emailForSignIn', email);
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error('Error sendSignInWithEmailLink:', errorCode, errorMessage);
-    });
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const awaitData = async (func: DataFunction, ...params: any[]) => {
   try {
     const response = await func(...params);
@@ -301,17 +263,13 @@ export const getDocumentWithSubcollections = async (colName: string, id: string,
   return { ...documentData, ...Object.assign({}, ...subcollectionData) };
 };
 
-const fetchQueryResults = async (query: QuerySnapshot) => {
-  const results: UserObjectDB[] = [];
-  query.forEach((doc) => {
-    const userData = doc.data() as UserObjectDB;
-    results.push(userData);
-  });
-  return results;
-};
-
 export const exists = async (colName: string, id: string): Promise<boolean> => {
   const docRef = doc(db, colName, id);
   const docSnapshot = await getDoc(docRef);
   return docSnapshot.exists();
+};
+
+export const existsByFilter = async (colName: string, filter: QueryFieldFilterConstraint, ...filters: QueryNonFilterConstraint[]): Promise<boolean> => {
+  const querySnapshot = await getDocs(query(collection(db, colName), filter, ...filters));
+  return !querySnapshot.empty;
 };

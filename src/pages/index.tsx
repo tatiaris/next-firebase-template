@@ -1,23 +1,33 @@
-import { AuthContext } from '@/hooks/useAuth';
-import React, { useContext } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import LoginForm from '@/components/forms/login-form';
+import Loading, { LoadingComponent } from '@/components/ui/loading';
 
-const Home = (): React.ReactNode => {
-  const { user, isGuest } = useContext(AuthContext);
+export default function Home(): React.ReactNode {
+  const { user, isGuest, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="py-4 px-4">
+        <Loading component={LoadingComponent.UserBadge} />
+      </div>
+    );
+  }
 
   return !isGuest ? (
     <div className="py-4 px-4">
-      <div className="flex gap-2">
-        <img className="rounded-full" width={50} height={50} src={user.photoURL} alt="" />
+      <div className="flex gap-2 items-center">
+        <img className="rounded-full" width={50} height={50} src={user.photoURL || '/placeholders/user.jpg'} alt="" />
         <div>
-          {user.displayName}
-          <br />
-          {user.email}
+          <div>{user.displayName && user.displayName}</div>
+          <div>{user.email}</div>
         </div>
       </div>
     </div>
   ) : (
-    <div className="py-4 px-4">logged-in: false</div>
+    <div className="py-4 px-4">
+      <div className="max-w-80">
+        <LoginForm />
+      </div>
+    </div>
   );
-};
-
-export default Home;
+}

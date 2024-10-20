@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { useRouter } from 'next/router';
-import { signInWithGoogle, signOutFromGoogle } from '@/util/firebase';
+import { signOutFromGoogle } from '@/util/firebase';
 import { useLogger } from '@/hooks/useLogger';
 import { AuthContext } from '@/hooks/useAuth';
 
@@ -34,11 +34,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
         </Button>
       </div>
       <div>
-        {isGuest ? (
-          <Button variant="outline" onClick={signInWithGoogle}>
-            log in
-          </Button>
-        ) : (
+        {!isGuest && (
           <Button variant="outline" onClick={signOutFromGoogle}>
             log out
           </Button>

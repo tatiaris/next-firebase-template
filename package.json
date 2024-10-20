@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "eslint --fix .",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx}\" --config ./.prettierrc",
-    "test": "jest",
-    "playwright": "playwright test",
+    "test": "npm run test:jest && npm run test:playwright",
+    "test:jest": "jest",
+    "test:playwright": "playwright test",
     "precommit": "lint-staged",
     "prepare": "husky"
   },

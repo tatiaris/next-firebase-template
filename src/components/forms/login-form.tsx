@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Icons } from '../ui/icons';
-import { signInWithEmailPassword, signInWithGooglePopup } from '@/util/firebase';
+import { signInWithEmailPassword, signInWithGooglePopup } from '@/util/platform/firebase';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

@@ -7,3 +7,7 @@ export const signIn = async (page) => {
   await page.locator('[name="password"]').fill('rtTemplateTest!123');
   await page.locator('[automation-id="btn-sign-in"]').click();
 };
+
+export const signOut = async (page) => {
+  await page.locator('[automation-id="btn-sign-out"]').click();
+};

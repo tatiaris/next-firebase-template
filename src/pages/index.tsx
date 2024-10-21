@@ -25,7 +25,7 @@ export default function Home(): React.ReactNode {
     </div>
   ) : (
     <div className="py-4 px-4">
-      <div className="max-w-80">
+      <div className="lg:max-w-80">
         <LoginForm />
       </div>
     </div>

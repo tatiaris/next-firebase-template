@@ -13,7 +13,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
   const { isGuest } = useAuth();
 
   return (
-    <div className="px-4 py-4 flex justify-between border-b-2 border-zinc">
+    <div className="px-4 py-4 pr-8 flex justify-between border-b-2 border-zinc">
       <div className="flex gap-10">
         <Button variant="link" onClick={() => router.push('/')}>
           home

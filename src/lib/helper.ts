@@ -1,6 +1,4 @@
 import { headers } from 'src/lib/constants';
-import { decode } from 'jsonwebtoken';
-import { Session } from './types';
 
 export const sum = (a: number, b: number): number => {
   return a + b;

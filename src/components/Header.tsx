@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { config } from 'src/config';
-import { Headers, useHeader } from '@/hooks/useHeader';
+import { Headers, useHeader } from '@hooks/useHeader';
 
 /**
  * Header component

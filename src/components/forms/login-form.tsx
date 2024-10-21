@@ -1,14 +1,14 @@
 'use client';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Icons } from '../ui/icons';
-import { signInWithEmailPassword, signInWithGooglePopup } from '@/lib/firebase';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
+import { signInWithEmailPassword, signInWithGooglePopup } from '@lib/firebase';
+import { cn } from '@lib/utils';
 
 const formSchema = z.object({
   email: z.string().email({

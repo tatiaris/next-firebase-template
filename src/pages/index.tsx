@@ -1,6 +1,6 @@
-import { useAuth } from '@/hooks/useAuth';
-import LoginForm from '@/components/forms/login-form';
-import Loading, { LoadingComponent } from '@/components/ui/loading';
+import LoginForm from '@components/forms/login-form';
+import Loading, { LoadingComponent } from '@components/ui/loading';
+import { useAuth } from '@hooks/useAuth';
 
 export default function Home(): React.ReactNode {
   const { user, isGuest, isLoading } = useAuth();

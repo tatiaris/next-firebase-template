@@ -3,19 +3,16 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/components/*": [
+      "@components/*": [
         "./src/components/*"
       ],
-      "@/lib/*": [
+      "@lib/*": [
         "./src/lib/*"
       ],
-      "@/hooks/*": [
+      "@hooks/*": [
         "./src/hooks/*"
       ],
-      "@/ui/*": [
+      "@ui/*": [
         "./src/components/ui/*"
       ],
     },

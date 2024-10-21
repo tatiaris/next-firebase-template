@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Button } from './ui/button';
 import { useRouter } from 'next/router';
-import { signOutFromGoogle } from '@/lib/firebase';
-import { AuthContext } from '@/hooks/useAuth';
+import { useAuth } from '@hooks/useAuth';
+import { signOutFromGoogle } from '@lib/firebase';
 
 /**
  * Navbar component
@@ -10,7 +10,7 @@ import { AuthContext } from '@/hooks/useAuth';
 
 export const Navbar: React.FC = (): React.ReactElement => {
   const router = useRouter();
-  const { isGuest } = useContext(AuthContext);
+  const { isGuest } = useAuth();
 
   return (
     <div className="px-4 py-4 flex justify-between border-b-2 border-zinc">

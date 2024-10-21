@@ -1,11 +1,11 @@
-import { AuthProvider } from '@/hooks/useAuth';
-import { LoggerProvider } from '@/hooks/useLogger';
-import { CacheProvider } from '@/hooks/useCache';
-import { APIProvider } from '@/hooks/useAPI';
-import { ThemeProvider } from '@/hooks/useTheme';
-import { Header } from '@/components/header';
-import { Navbar } from '@/components/navbar';
-import { Footer } from '@/components/footer';
+import { APIProvider } from '@hooks/useAPI';
+import { AuthProvider } from '@hooks/useAuth';
+import { CacheProvider } from '@hooks/useCache';
+import { LoggerProvider } from '@hooks/useLogger';
+import { ThemeProvider } from '@hooks/useTheme';
+import { Footer } from '@components/footer';
+import { Header } from '@components/header';
+import { Navbar } from '@components/navbar';
 import 'src/global.css';
 
 export default function MyApp({ Component, pageProps }) {

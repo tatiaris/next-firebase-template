@@ -5,6 +5,18 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/lib/*": [
+        "src/lib/*"
+      ],
+      "@/util/*": [
+        "src/util/*"
+      ],
+      "@/hooks/*": [
+        "src/hooks/*"
       ]
     },
     "lib": [

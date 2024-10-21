@@ -3,10 +3,8 @@ import { Collections } from 'src/lib/constants';
 import { Timestamp } from '@google-cloud/firestore';
 import { firestore } from 'firebase-admin';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataFunction = (...params: any[]) => Promise<any>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const awaitData = async (func: DataFunction, ...params: any[]) => {
   try {
     const response = await func(...params);

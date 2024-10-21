@@ -1,6 +1,6 @@
-import { Footer } from '@components/footer';
-import { Header } from '@components/header';
-import { Navbar } from '@components/navbar';
+import { Footer } from '@components/Footer';
+import { Header } from '@components/Header';
+import { Navbar } from '@components/Navbar';
 import { APIProvider } from '@hooks/useAPI';
 import { AuthProvider } from '@hooks/useAuth';
 import { CacheProvider } from '@hooks/useCache';

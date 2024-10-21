@@ -12,12 +12,12 @@
       "@/lib/*": [
         "src/lib/*"
       ],
-      "@/util/*": [
-        "src/util/*"
-      ],
       "@/hooks/*": [
         "src/hooks/*"
-      ]
+      ],
+      "@/ui/*": [
+        "src/components/ui/*"
+      ],
     },
     "lib": [
       "dom",

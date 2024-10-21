@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Button } from './ui/button';
 import { useRouter } from 'next/router';
-import { signOutFromGoogle } from '@/util/platform/firebase';
+import { signOutFromGoogle } from '@/lib/firebase';
 import { AuthContext } from '@/hooks/useAuth';
 
 /**
@@ -29,5 +29,3 @@ export const Navbar: React.FC = (): React.ReactElement => {
     </div>
   );
 };
-
-export default Navbar;

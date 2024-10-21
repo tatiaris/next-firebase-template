@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 /**
  * Footer component
  */
-const Footer: React.FC = () => {
+export const Footer: React.FC = () => {
   const { setTheme } = useTheme();
   return (
     <div className="px-4 py-4 border-t-2 border-zinc text-end">
@@ -14,5 +14,3 @@ const Footer: React.FC = () => {
     </div>
   );
 };
-
-export default Footer;

@@ -24,5 +24,3 @@ export const Header: React.FC = () => {
     </Head>
   );
 };
-
-export default Header;

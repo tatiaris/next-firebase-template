@@ -2,7 +2,7 @@ import { useCallback, createContext, useContext } from 'react';
 import { and, where } from 'firebase/firestore';
 import { Session, UserObjectDB } from 'src/lib/types';
 import { Collections } from 'src/lib/constants';
-import { findObjectsByFilter } from '@/util/platform/firebase';
+import { findObjectsByFilter } from '@/lib/firebase';
 
 export const APIContext = createContext<ReturnType<typeof useAPI>>({
   fetchSession: async () => null,

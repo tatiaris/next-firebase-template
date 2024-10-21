@@ -7,11 +7,9 @@ if (fs.apps.length === 0) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
   fs.initializeApp({
     credential: fs.credential.cert(serviceAccount),
-    storageBucket: 'rekkit-app.appspot.com'
+    storageBucket: 'next-firebase-template.appspot.com'
   });
 }
-
-// const db = fs.firestore();
 
 export const db: Firestore = fs.firestore();
 
@@ -117,16 +115,7 @@ export const findObjectByFilter = async (colName: string, field: string, operato
 
 export const findObjectById = async (colName: string, id: string): Promise<object | null> => {
   const snapshot = await db.collection(colName).doc(id).get();
-  const data = snapshot.exists
-    ? snapshot.data()
-    : colName === Collections.User
-      ? ({
-          id,
-          username: 'deleted_user',
-          name: 'Deleted User',
-          picture: 'https://via.placeholder.com/150'
-        } as UserObjectDB)
-      : null;
+  const data = snapshot.exists ? snapshot.data() : null;
   return data;
 };
 

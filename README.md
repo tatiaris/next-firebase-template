@@ -1,5 +1,5 @@
 # Next Firebase Template
-Web development essentials starter pack
+Web development essentials starter kit
 
 ## Built with
 - [Next.js](https://nextjs.org/docs/pages) – Framework

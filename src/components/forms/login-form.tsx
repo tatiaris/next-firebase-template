@@ -30,7 +30,6 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     setIsLoading(true);
     signInWithEmailPassword(values.email, values.password).catch((error) => {
       console.error(error);

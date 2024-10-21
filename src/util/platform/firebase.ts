@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL, getMetadata, StorageError } from 'firebase/storage';
 import { GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
-import { Collections } from 'src/lib/constants';
 import {
   addDoc,
   collection,
@@ -25,7 +24,6 @@ import {
   getFirestore,
   QueryFieldFilterConstraint
 } from 'firebase/firestore';
-import { UserObjectDB } from 'src/lib/types';
 
 export const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string);
 
@@ -54,7 +52,7 @@ export const signInWithEmailPassword = async (email: string, password: string) =
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (error) {
-    if (error.code === 'auth/user-not-found') {
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
       await createUserWithEmailAndPassword(auth, email, password);
     } else {
       throw error;
@@ -149,16 +147,7 @@ export const findObjectsByFilter = async (colName: string, filter: QueryComposit
 export const findObjectById = async (colName: string, id: string): Promise<object | null> => {
   const [snapshot, findObjectError] = (await awaitData(getDoc, doc(db, colName, id))) as [DocumentSnapshot, FirestoreError];
   if (findObjectError) handleFirestoreError('findObjectById', findObjectError);
-  const data = snapshot.exists()
-    ? (snapshot.data() as UserObjectDB)
-    : colName === Collections.User
-      ? ({
-          id,
-          username: 'deleted_user',
-          name: 'Deleted User',
-          picture: 'https://via.placeholder.com/150'
-        } as UserObjectDB)
-      : null;
+  const data = snapshot.exists() ? snapshot.data() : null;
   return data;
 };
 

@@ -1,13 +1,12 @@
 import fs from 'firebase-admin';
 import { DocumentData, Firestore, QuerySnapshot, WhereFilterOp } from '@google-cloud/firestore';
-import { UserObjectDB } from 'src/lib/types';
-import { Collections } from 'src/lib/constants';
 
 if (fs.apps.length === 0) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
+  const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG as string);
   fs.initializeApp({
     credential: fs.credential.cert(serviceAccount),
-    storageBucket: 'next-firebase-template.appspot.com'
+    storageBucket: firebaseConfig.storageBucket
   });
 }
 

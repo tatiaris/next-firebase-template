@@ -1,4 +1,4 @@
-# TS Next Firebase Template
+# Next Firebase Template
 Web development essentials starter pack
 
 ## Built with
@@ -11,7 +11,7 @@ Web development essentials starter pack
 - Linting – [ESLint](https://eslint.org/docs/latest/)
 - Formatting – [Prettier](https://prettier.io/docs/en/)
 - Unit testing – [Jest](https://jestjs.io/docs/getting-started)
-- Integration testing – [Playwright](https://playwright.dev)
+- E2E testing – [Playwright](https://playwright.dev)
 - Hooks – [Husky](https://typicode.github.io/husky/how-to.html)
 - Firebase authentication
 - Multi-theme support

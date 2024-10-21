@@ -7,16 +7,16 @@
         "./src/*"
       ],
       "@/components/*": [
-        "src/components/*"
+        "./src/components/*"
       ],
       "@/lib/*": [
-        "src/lib/*"
+        "./src/lib/*"
       ],
       "@/hooks/*": [
-        "src/hooks/*"
+        "./src/hooks/*"
       ],
       "@/ui/*": [
-        "src/components/ui/*"
+        "./src/components/ui/*"
       ],
     },
     "lib": [

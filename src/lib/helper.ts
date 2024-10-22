@@ -8,7 +8,7 @@ export const getCookie = (c_name: string): string => {
   let c_value = " " + document.cookie;
   let c_start = c_value.indexOf(" " + c_name + "=");
   if (c_start == -1) {
-    c_value = null;
+    c_value = "";
   } else {
     c_start = c_value.indexOf("=", c_start) + 1;
     let c_end = c_value.indexOf(";", c_start);

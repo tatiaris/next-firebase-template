@@ -173,7 +173,7 @@ export const findObjectByFilter = async (
 export const findObjectById = async (
   colName: string,
   id: string,
-): Promise<object | null> => {
+): Promise<DocumentData | null | undefined> => {
   const snapshot = await db.collection(colName).doc(id).get();
   const data = snapshot.exists ? snapshot.data() : null;
   return data;

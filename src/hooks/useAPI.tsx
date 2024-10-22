@@ -19,7 +19,7 @@ export type API = {
 };
 
 export function APIProvider({ children }) {
-  const fetchIdFromUsername = async (username: string): Promise<string> => {
+  const fetchIdFromUsername = async (username: string): Promise<string | undefined> => {
     const user = (await findObjectsByFilter(
       Collections.User,
       and(where("username", "==", username)),
@@ -28,7 +28,7 @@ export function APIProvider({ children }) {
     return user[0].id;
   };
 
-  const fetchSession = useCallback(async (): Promise<Session> => {
+  const fetchSession = useCallback(async (): Promise<Session | null> => {
     const response = await fetch(`/api/auth/session`);
     const resJson = await response.json();
     const session = resJson.session;
@@ -44,7 +44,7 @@ export function APIProvider({ children }) {
 
   const fetchProfileByUsername = async (
     username: string,
-  ): Promise<UserObjectDB> => {
+  ): Promise<UserObjectDB | null> => {
     const id = await fetchIdFromUsername(username);
     const res = await fetch(`/api/user/${id}/profile`);
     const resData = await res.json();
@@ -55,7 +55,7 @@ export function APIProvider({ children }) {
     return resData.data;
   };
 
-  const fetchProfileById = async (id: string): Promise<UserObjectDB> => {
+  const fetchProfileById = async (id: string): Promise<UserObjectDB | null> => {
     const res = await fetch(`/api/user/${id}/profile`);
     const resData = await res.json();
     if (!resData.success) {

@@ -9,5 +9,7 @@ export const signIn = async (page) => {
 };
 
 export const signOut = async (page) => {
+  await page.locator('[automation-id="btn-user-menu"]').click();
+  await expect(page.getByText(/Sign Out/)).toBeVisible();
   await page.locator('[automation-id="btn-sign-out"]').click();
 };

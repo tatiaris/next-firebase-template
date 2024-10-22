@@ -9,7 +9,7 @@ export const Footer: React.FC = () => {
   return (
     <div className="px-8 py-4 border-t-2 border-zinc text-end">
       <Button variant="outline" onClick={() => toggleTheme()}>
-        change theme
+        Toggle theme
       </Button>
     </div>
   );

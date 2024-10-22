@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { useAuth } from "@hooks/useAuth";
 import { signOutFromGoogle } from "@lib/firebase";
 import { useRouter } from "next/navigation";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "./ui/menubar";
 
 /**
  * Navbar component
@@ -10,23 +11,36 @@ import { useRouter } from "next/navigation";
 
 export const Navbar: React.FC = (): React.ReactElement => {
   const router = useRouter();
-  const { isGuest } = useAuth();
+  const { isGuest, user } = useAuth();
 
   return (
     <div className="px-4 py-4 pr-8 flex justify-between border-b-2 border-zinc">
-      <div className="flex gap-10">
+      <div className="flex gap-2">
         <Button variant="link" onClick={() => router.push("/")}>
-          app
+          App
         </Button>
         <Button variant="link" onClick={() => router.push("/page")}>
-          page
+          Page
         </Button>
       </div>
       <div>
-        {!isGuest && (
-          <Button variant="outline" onClick={signOutFromGoogle}>
-            sign out
-          </Button>
+        {(!isGuest && user) && (
+          <Menubar className="px-0 py-0 border-0">
+            <MenubarMenu>
+              <MenubarTrigger className="px-0 py-0 rounded-full overflow-hidden cursor-pointer" automation-id="btn-user-menu">
+                <img src={user.photoURL || "/placeholders/user.jpg"} width={36} height={36} alt="" />
+              </MenubarTrigger>
+              <MenubarContent side="bottom" align="end">
+                <MenubarItem disabled>
+                  {user.displayName || user.email}
+                </MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem role="button" className="cursor-pointer bg-destructive focus:bg-red-600" automation-id="btn-sign-out" onClick={signOutFromGoogle}>
+                  Sign Out
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
         )}
       </div>
     </div>

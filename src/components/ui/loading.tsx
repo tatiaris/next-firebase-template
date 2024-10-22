@@ -1,19 +1,21 @@
-import { Skeleton } from '@components/ui/skeleton';
-import { Spinner } from './spinner';
+import { Skeleton } from "@components/ui/skeleton";
+import { Spinner } from "./spinner";
 
 /**
  * Loading component
  */
 
 export enum LoadingComponent {
-  Spinner = 'spinner',
-  UserBadge = 'user-badge'
+  Spinner = "spinner",
+  UserBadge = "user-badge",
 }
 type LoadingProps = {
   component?: LoadingComponent;
 };
 
-const Loading: React.FC<LoadingProps> = ({ component = LoadingComponent.Spinner }) => {
+const Loading: React.FC<LoadingProps> = ({
+  component = LoadingComponent.Spinner,
+}) => {
   switch (component) {
     case LoadingComponent.Spinner:
       return <Spinner />;

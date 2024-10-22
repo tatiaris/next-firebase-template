@@ -1,7 +1,7 @@
-import { addObjectToCollection, findObjectByFilter } from './firebase';
-import { Collections } from 'src/lib/constants';
-import { Timestamp } from '@google-cloud/firestore';
-import { firestore } from 'firebase-admin';
+import { addObjectToCollection, findObjectByFilter } from "./firebase";
+import { Collections } from "src/lib/constants";
+import { Timestamp } from "@google-cloud/firestore";
+import { firestore } from "firebase-admin";
 
 type DataFunction = (...params: any[]) => Promise<any>;
 
@@ -18,34 +18,43 @@ export const handleError = (error, res) => {
   const errorObj = error as Error;
   const errorData = getErrorData(errorObj);
   if (errorData.code === 500) {
-    console.error('handleError:', error);
-    if (process.env.NODE_ENV === 'production') {
-      addObjectToCollection('errors', {
+    console.error("handleError:", error);
+    if (process.env.NODE_ENV === "production") {
+      addObjectToCollection("errors", {
         name: errorObj.name,
         message: errorObj.message,
         stack: errorObj.stack,
         cause: errorObj.cause,
-        timestamp: Timestamp.now()
+        timestamp: Timestamp.now(),
       });
     }
   }
-  res.status(errorData.code).json({ success: false, message: errorData.message, data: errorObj });
+  res
+    .status(errorData.code)
+    .json({ success: false, message: errorData.message, data: errorObj });
 };
 
 export const getErrorData = (error) => {
   try {
-    const errMessageSplit = error.message.split(' - ');
+    const errMessageSplit = error.message.split(" - ");
     const code = parseInt(errMessageSplit[0]) || 500;
     const message = errMessageSplit[1];
     return { code, message };
   } catch (error) {
-    return { code: 500, message: 'Something went wrong on our side!' };
+    return { code: 500, message: "Something went wrong on our side!" };
   }
 };
 
 export const isUsernameTaken = async (username: string): Promise<boolean> => {
-  if (!username || username.length < 1 || username === 'deleted_user') return true;
-  const [user] = await awaitData(findObjectByFilter, Collections.User, 'username', '==', username);
+  if (!username || username.length < 1 || username === "deleted_user")
+    return true;
+  const [user] = await awaitData(
+    findObjectByFilter,
+    Collections.User,
+    "username",
+    "==",
+    username,
+  );
   return user !== null;
 };
 
@@ -61,24 +70,24 @@ function selectHighestQualityIcon(icons: string[]) {
 
 function getIconFullUrl(url, icon) {
   // Check if the icon URL is already a full URL
-  if (icon.startsWith('http')) return icon;
-  if (icon.startsWith('//')) return 'https:' + icon;
+  if (icon.startsWith("http")) return icon;
+  if (icon.startsWith("//")) return "https:" + icon;
 
   // Parse the base URL
   const urlObj = new URL(url);
 
   // Handle absolute path
-  if (icon.startsWith('/')) {
+  if (icon.startsWith("/")) {
     return urlObj.origin + icon;
   }
 
   // If icon is a relative path, use only the origin of the base URL
-  return urlObj.origin + '/' + icon;
+  return urlObj.origin + "/" + icon;
 }
 
 export const replaceHttpWithHttps = (url: string): string => {
-  if (url.startsWith('http://')) {
-    return url.replace('http://', 'https://');
+  if (url.startsWith("http://")) {
+    return url.replace("http://", "https://");
   }
   return url;
 };
@@ -91,7 +100,9 @@ export const deleteUser = async (userId: string) => {
 
   const batch = firestore().batch();
 
-  const deleteSubcollections = async (docRef: FirebaseFirestore.DocumentReference) => {
+  const deleteSubcollections = async (
+    docRef: FirebaseFirestore.DocumentReference,
+  ) => {
     const subcollections = await docRef.listCollections();
     for (const subcollection of subcollections) {
       const subcollectionSnapshot = await subcollection.get();
@@ -104,15 +115,22 @@ export const deleteUser = async (userId: string) => {
 
   try {
     // Remove the user from other users' follower and following lists
-    const [followersSnapshot, followingSnapshot] = await Promise.all([firestore().collection(`users/${userId}/followers`).get(), firestore().collection(`users/${userId}/following`).get()]);
+    const [followersSnapshot, followingSnapshot] = await Promise.all([
+      firestore().collection(`users/${userId}/followers`).get(),
+      firestore().collection(`users/${userId}/following`).get(),
+    ]);
 
     followersSnapshot.forEach((doc) => {
-      const followingRef = firestore().collection(`users/${doc.id}/following`).doc(userId);
+      const followingRef = firestore()
+        .collection(`users/${doc.id}/following`)
+        .doc(userId);
       batch.delete(followingRef);
     });
 
     followingSnapshot.forEach((doc) => {
-      const followersRef = firestore().collection(`users/${doc.id}/followers`).doc(userId);
+      const followersRef = firestore()
+        .collection(`users/${doc.id}/followers`)
+        .doc(userId);
       batch.delete(followersRef);
     });
 
@@ -120,7 +138,14 @@ export const deleteUser = async (userId: string) => {
     await deleteSubcollections(userRef);
 
     // Delete the follower and following subcollections of the user
-    await Promise.all([deleteSubcollections(firestore().collection(`users/${userId}/followers`).doc()), deleteSubcollections(firestore().collection(`users/${userId}/following`).doc())]);
+    await Promise.all([
+      deleteSubcollections(
+        firestore().collection(`users/${userId}/followers`).doc(),
+      ),
+      deleteSubcollections(
+        firestore().collection(`users/${userId}/following`).doc(),
+      ),
+    ]);
 
     // Delete the user document itself
     batch.delete(userRef);
@@ -128,7 +153,7 @@ export const deleteUser = async (userId: string) => {
     // Commit the batch
     await batch.commit();
   } catch (error) {
-    console.error('Error deleting user data:', error);
+    console.error("Error deleting user data:", error);
     throw error; // Re-throw error to handle it in the calling function if needed
   }
 };

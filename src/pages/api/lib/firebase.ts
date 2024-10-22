@@ -1,12 +1,19 @@
-import fs from 'firebase-admin';
-import { DocumentData, Firestore, QuerySnapshot, WhereFilterOp } from '@google-cloud/firestore';
+import fs from "firebase-admin";
+import {
+  DocumentData,
+  Firestore,
+  QuerySnapshot,
+  WhereFilterOp,
+} from "@google-cloud/firestore";
 
 if (fs.apps.length === 0) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string);
+  const serviceAccount = JSON.parse(
+    process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string,
+  );
   const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG as string);
   fs.initializeApp({
     credential: fs.credential.cert(serviceAccount),
-    storageBucket: firebaseConfig.storageBucket
+    storageBucket: firebaseConfig.storageBucket,
   });
 }
 
@@ -24,13 +31,29 @@ export const getSampleData = async () => {
   return samples;
 };
 
-export const getDocId = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
-  const snapshot = await db.collection(colName).where(field, operator, value).get();
+export const getDocId = async (
+  colName: string,
+  field: string,
+  operator: WhereFilterOp,
+  value: any,
+) => {
+  const snapshot = await db
+    .collection(colName)
+    .where(field, operator, value)
+    .get();
   return snapshot.docs[0].id;
 };
 
-export const getIdByField = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
-  const snapshot = await db.collection(colName).where(field, operator, value).get();
+export const getIdByField = async (
+  colName: string,
+  field: string,
+  operator: WhereFilterOp,
+  value: any,
+) => {
+  const snapshot = await db
+    .collection(colName)
+    .where(field, operator, value)
+    .get();
   return snapshot.docs[0].id;
 };
 
@@ -39,7 +62,9 @@ export const addObjectToCollection = async (col: string, obj: object) => {
   return docRef.id;
 };
 
-export const getCollection = async (col: string): Promise<QuerySnapshot<DocumentData>> => {
+export const getCollection = async (
+  col: string,
+): Promise<QuerySnapshot<DocumentData>> => {
   const snapshot = await db.collection(col).get();
   return snapshot;
 };
@@ -62,11 +87,19 @@ export const getCount = async (col: string): Promise<number> => {
   return snapshot.size;
 };
 
-export const updateObjectById = async (colName: string, id: string, updatedValues: object) => {
+export const updateObjectById = async (
+  colName: string,
+  id: string,
+  updatedValues: object,
+) => {
   await db.collection(colName).doc(id).update(updatedValues);
 };
 
-export const updateOrAddObjectById = async (colName: string, id: string, updatedValues: object) => {
+export const updateOrAddObjectById = async (
+  colName: string,
+  id: string,
+  updatedValues: object,
+) => {
   // check if the document exists
   const doc = await db.collection(colName).doc(id).get();
   if (!doc.exists) {
@@ -84,8 +117,16 @@ export const deleteDocById = async (col: string, id: string) => {
   await db.collection(col).doc(id).delete();
 };
 
-export const deleteDocsByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
-  const snapshot = await db.collection(colName).where(field, operator, value).get();
+export const deleteDocsByFilter = async (
+  colName: string,
+  field: string,
+  operator: WhereFilterOp,
+  value: any,
+) => {
+  const snapshot = await db
+    .collection(colName)
+    .where(field, operator, value)
+    .get();
   if (snapshot.empty) {
     return;
   }
@@ -96,13 +137,30 @@ export const deleteDocsByFilter = async (colName: string, field: string, operato
   await batch.commit();
 };
 
-export const findObjectsByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any) => {
-  const snapshot = await db.collection(colName).where(field, operator, value).get();
+export const findObjectsByFilter = async (
+  colName: string,
+  field: string,
+  operator: WhereFilterOp,
+  value: any,
+) => {
+  const snapshot = await db
+    .collection(colName)
+    .where(field, operator, value)
+    .get();
   return snapshot.docs.map((doc) => doc.data());
 };
 
-export const findObjectByFilter = async (colName: string, field: string, operator: WhereFilterOp, value: any): Promise<object | null> => {
-  const snapshot: QuerySnapshot<DocumentData> = await db.collection(colName).where(field, operator, value).limit(1).get();
+export const findObjectByFilter = async (
+  colName: string,
+  field: string,
+  operator: WhereFilterOp,
+  value: any,
+): Promise<object | null> => {
+  const snapshot: QuerySnapshot<DocumentData> = await db
+    .collection(colName)
+    .where(field, operator, value)
+    .limit(1)
+    .get();
 
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
@@ -112,7 +170,10 @@ export const findObjectByFilter = async (colName: string, field: string, operato
   }
 };
 
-export const findObjectById = async (colName: string, id: string): Promise<object | null> => {
+export const findObjectById = async (
+  colName: string,
+  id: string,
+): Promise<object | null> => {
   const snapshot = await db.collection(colName).doc(id).get();
   const data = snapshot.exists ? snapshot.data() : null;
   return data;

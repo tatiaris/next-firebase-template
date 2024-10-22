@@ -1,14 +1,14 @@
-import { useCallback, createContext, useContext } from 'react';
-import { and, where } from 'firebase/firestore';
-import { Session, UserObjectDB } from 'src/lib/types';
-import { Collections } from 'src/lib/constants';
-import { findObjectsByFilter } from '@lib/firebase';
+import { useCallback, createContext, useContext } from "react";
+import { and, where } from "firebase/firestore";
+import { Session, UserObjectDB } from "src/lib/types";
+import { Collections } from "src/lib/constants";
+import { findObjectsByFilter } from "@lib/firebase";
 
 export const APIContext = createContext<ReturnType<typeof useAPI>>({
   fetchSession: async () => null,
   getUnreadNotificationsCount: async () => 0,
   fetchProfileByUsername: async () => null,
-  fetchProfileById: async () => null
+  fetchProfileById: async () => null,
 });
 
 export type API = {
@@ -20,7 +20,10 @@ export type API = {
 
 export function APIProvider({ children }) {
   const fetchIdFromUsername = async (username: string): Promise<string> => {
-    const user = (await findObjectsByFilter(Collections.User, and(where('username', '==', username)))) as UserObjectDB[];
+    const user = (await findObjectsByFilter(
+      Collections.User,
+      and(where("username", "==", username)),
+    )) as UserObjectDB[];
     if (user.length === 0) return undefined;
     return user[0].id;
   };
@@ -29,7 +32,7 @@ export function APIProvider({ children }) {
     const response = await fetch(`/api/auth/session`);
     const resJson = await response.json();
     const session = resJson.session;
-    if ('username' in session) {
+    if ("username" in session) {
       return session;
     }
     return null;
@@ -39,12 +42,14 @@ export function APIProvider({ children }) {
     return 1;
   }, []);
 
-  const fetchProfileByUsername = async (username: string): Promise<UserObjectDB> => {
+  const fetchProfileByUsername = async (
+    username: string,
+  ): Promise<UserObjectDB> => {
     const id = await fetchIdFromUsername(username);
     const res = await fetch(`/api/user/${id}/profile`);
     const resData = await res.json();
     if (!resData.success) {
-      console.error('Error getAllUserDataByUsername:', resData);
+      console.error("Error getAllUserDataByUsername:", resData);
       return null;
     }
     return resData.data;
@@ -54,13 +59,24 @@ export function APIProvider({ children }) {
     const res = await fetch(`/api/user/${id}/profile`);
     const resData = await res.json();
     if (!resData.success) {
-      console.error('Error getAllUserDataByUsername:', resData);
+      console.error("Error getAllUserDataByUsername:", resData);
       return null;
     }
     return resData.data;
   };
 
-  return <APIContext.Provider value={{ fetchSession, getUnreadNotificationsCount, fetchProfileByUsername, fetchProfileById }}>{children}</APIContext.Provider>;
+  return (
+    <APIContext.Provider
+      value={{
+        fetchSession,
+        getUnreadNotificationsCount,
+        fetchProfileByUsername,
+        fetchProfileById,
+      }}
+    >
+      {children}
+    </APIContext.Provider>
+  );
 }
 
 export default function useAPI() {

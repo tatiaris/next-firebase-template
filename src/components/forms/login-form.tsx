@@ -1,31 +1,40 @@
-'use client';
-import { useState } from 'react';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { Icons } from '../ui/icons';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form';
-import { signInWithEmailPassword, signInWithGooglePopup } from '@lib/firebase';
-import { cn } from '@lib/utils';
+"use client";
+import { useState } from "react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Icons } from "../ui/icons";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "../ui/form";
+import { signInWithEmailPassword, signInWithGooglePopup } from "@lib/firebase";
+import { cn } from "@lib/utils";
 
 const formSchema = z.object({
   email: z.string().email({
-    message: 'Invalid email address.'
+    message: "Invalid email address.",
   }),
   password: z.string().min(8, {
-    message: 'Password must be at least 8 characters.'
-  })
+    message: "Password must be at least 8 characters.",
+  }),
 });
 
-export default function LoginForm({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export default function LoginForm({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    },
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -38,9 +47,9 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
       .catch((error) => {
         console.error(error);
         setIsLoading(false);
-        form.setError('password', {
-          type: 'manual',
-          message: 'Invalid email or password.'
+        form.setError("password", {
+          type: "manual",
+          message: "Invalid email or password.",
         });
       });
   }
@@ -58,7 +67,7 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
   }
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
+    <div className={cn("grid gap-6", className)} {...props}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-2">
@@ -69,7 +78,11 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="name@example.com" autoComplete="email" {...field} />
+                      <Input
+                        placeholder="name@example.com"
+                        autoComplete="email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -81,15 +94,26 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" placeholder="password" autoComplete="current-password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="password"
+                        autoComplete="current-password"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <Button type="submit" automation-id="btn-sign-in" disabled={isLoading}>
-              {isLoading && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              type="submit"
+              automation-id="btn-sign-in"
+              disabled={isLoading}
+            >
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Sign In
             </Button>
           </div>
@@ -100,11 +124,23 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading} onClick={handleSignInWithGoogle}>
-        {isLoading ? <Icons.spinner className="mr-2 h-4 w-4 animate-spin" /> : <Icons.google className="mr-2 h-4 w-4" />} Google
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        onClick={handleSignInWithGoogle}
+      >
+        {isLoading ? (
+          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Icons.google className="mr-2 h-4 w-4" />
+        )}{" "}
+        Google
       </Button>
     </div>
   );

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const useDebounce = (searchFunction, searchQuery, delay) => {
   const [debounced, setDebounced] = useState(null);
   const [inProgress, setInProgress] = useState(false);
 
   useEffect(() => {
-    if (searchQuery === '') {
+    if (searchQuery === "") {
       setDebounced(null);
       setInProgress(false);
       return;

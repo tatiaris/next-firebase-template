@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button } from './ui/button';
-import { useAuth } from '@hooks/useAuth';
-import { signOutFromGoogle } from '@lib/firebase';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { Button } from "./ui/button";
+import { useAuth } from "@hooks/useAuth";
+import { signOutFromGoogle } from "@lib/firebase";
+import { useRouter } from "next/navigation";
 
 /**
  * Navbar component
@@ -15,10 +15,10 @@ export const Navbar: React.FC = (): React.ReactElement => {
   return (
     <div className="px-4 py-4 pr-8 flex justify-between border-b-2 border-zinc">
       <div className="flex gap-10">
-        <Button variant="link" onClick={() => router.push('/')}>
+        <Button variant="link" onClick={() => router.push("/")}>
           app
         </Button>
-        <Button variant="link" onClick={() => router.push('/page')}>
+        <Button variant="link" onClick={() => router.push("/page")}>
           page
         </Button>
       </div>

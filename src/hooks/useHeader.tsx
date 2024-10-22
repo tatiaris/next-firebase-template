@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
 export const HeaderContext = createContext<ReturnType<typeof useHeader>>({
   header: {
-    title: '',
-    description: ''
+    title: "",
+    description: "",
   },
-  setHeader: () => {}
+  setHeader: () => {},
 });
 
 export type Headers = {
@@ -15,11 +15,15 @@ export type Headers = {
 
 export const HeaderProvider = ({ children }) => {
   const [header, setHeader] = useState<Headers>({
-    title: '',
-    description: ''
+    title: "",
+    description: "",
   });
 
-  return <HeaderContext.Provider value={{ header, setHeader }}>{children}</HeaderContext.Provider>;
+  return (
+    <HeaderContext.Provider value={{ header, setHeader }}>
+      {children}
+    </HeaderContext.Provider>
+  );
 };
 
 export function useHeader() {

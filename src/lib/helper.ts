@@ -1,17 +1,17 @@
-import { headers } from 'src/lib/constants';
+import { headers } from "src/lib/constants";
 
 export const sum = (a: number, b: number): number => {
   return a + b;
 };
 
 export const getCookie = (c_name: string): string => {
-  let c_value = ' ' + document.cookie;
-  let c_start = c_value.indexOf(' ' + c_name + '=');
+  let c_value = " " + document.cookie;
+  let c_start = c_value.indexOf(" " + c_name + "=");
   if (c_start == -1) {
     c_value = null;
   } else {
-    c_start = c_value.indexOf('=', c_start) + 1;
-    let c_end = c_value.indexOf(';', c_start);
+    c_start = c_value.indexOf("=", c_start) + 1;
+    let c_end = c_value.indexOf(";", c_start);
     if (c_end == -1) {
       c_end = c_value.length;
     }
@@ -32,19 +32,23 @@ export const refreshPage = () => {
 
 export const addOneToDatabase = async (collection: string, newObject: any) => {
   const res = await fetch(`/api/admin/${collection}`, {
-    method: 'POST',
-    headers: headers['POST'],
-    body: JSON.stringify({ newObject })
+    method: "POST",
+    headers: headers["POST"],
+    body: JSON.stringify({ newObject }),
   });
   const resJson = res.json();
   return resJson;
 };
 
-export const updateOneInDatabase = async (collection: string, objectId: string, updatedKeysAndVals: any) => {
+export const updateOneInDatabase = async (
+  collection: string,
+  objectId: string,
+  updatedKeysAndVals: any,
+) => {
   const res = await fetch(`/api/admin/${collection}/${objectId}`, {
-    method: 'PUT',
-    headers: headers['PUT'],
-    body: JSON.stringify({ objectId, updatedKeysAndVals })
+    method: "PUT",
+    headers: headers["PUT"],
+    body: JSON.stringify({ objectId, updatedKeysAndVals }),
   });
   const resJson = res.json();
   return resJson;
@@ -52,7 +56,7 @@ export const updateOneInDatabase = async (collection: string, objectId: string, 
 
 export const deleteOneFromDatabase = async (collection: string, id: string) => {
   const res = await fetch(`/api/admin/${collection}/${id}`, {
-    method: 'DELETE'
+    method: "DELETE",
   });
   const resJson = res.json();
   return resJson;
@@ -64,11 +68,15 @@ export const getOneFromDatabase = async (collection: string, id: string) => {
   return resData;
 };
 
-export const queryOneFromDatabase = async (collection: string, key: string, value: string) => {
+export const queryOneFromDatabase = async (
+  collection: string,
+  key: string,
+  value: string,
+) => {
   const res = await fetch(`/api/admin/${collection}/query`, {
-    method: 'POST',
-    headers: headers['POST'],
-    body: JSON.stringify({ key, value })
+    method: "POST",
+    headers: headers["POST"],
+    body: JSON.stringify({ key, value }),
   });
   const resJson = res.json();
   return resJson;
@@ -88,7 +96,10 @@ export const getAllFromCollection = async (collection: string) => {
   return collectionData ? collectionData : null;
 };
 
-export const updateAllInCollection = async (collection: string, updatedKeysAndVals: any) => {
+export const updateAllInCollection = async (
+  collection: string,
+  updatedKeysAndVals: any,
+) => {
   return null;
 };
 
@@ -98,18 +109,31 @@ export const deleteAllFromCollection = async (collection: string) => {
 
 /* MULTIPLE OBJECTS CRUD */
 
-export const addMultipleToCollection = async (collection: string, newObjects: any[]) => {
+export const addMultipleToCollection = async (
+  collection: string,
+  newObjects: any[],
+) => {
   return null;
 };
 
-export const updateMultipleInCollection = async (collection: string, objectIds: string[], updatedKeysAndVals: any[]) => {
+export const updateMultipleInCollection = async (
+  collection: string,
+  objectIds: string[],
+  updatedKeysAndVals: any[],
+) => {
   return null;
 };
 
-export const deleteMultipleFromCollection = async (collection: string, ids: string[]) => {
+export const deleteMultipleFromCollection = async (
+  collection: string,
+  ids: string[],
+) => {
   return null;
 };
 
-export const getMultipleFromCollection = async (collection: string, id: string) => {
+export const getMultipleFromCollection = async (
+  collection: string,
+  id: string,
+) => {
   return null;
 };

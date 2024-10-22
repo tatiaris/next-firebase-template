@@ -23,7 +23,7 @@ export default [
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended'
+    'next'
   ),
   {
     languageOptions: {
@@ -52,19 +52,11 @@ export default [
     },
 
     rules: {
-      'prettier/prettier': [
-        'error',
-        {},
-        {
-          usePrettierrc: true
-        }
-      ],
-
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': 'off',
 
       'jsx-a11y/anchor-is-valid': [
         'error',

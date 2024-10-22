@@ -1,5 +1,5 @@
-import { useTheme } from '@hooks/useTheme';
-import { Button } from './ui/button';
+import { useTheme } from "@hooks/useTheme";
+import { Button } from "./ui/button";
 
 /**
  * Footer component

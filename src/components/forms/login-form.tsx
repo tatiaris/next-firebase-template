@@ -31,22 +31,30 @@ export default function LoginForm({ className, ...props }: React.HTMLAttributes<
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    signInWithEmailPassword(values.email, values.password).catch((error) => {
-      console.error(error);
-      setIsLoading(false);
-      form.setError('password', {
-        type: 'manual',
-        message: 'Invalid email or password.'
+    signInWithEmailPassword(values.email, values.password)
+      .then(() => {
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+        form.setError('password', {
+          type: 'manual',
+          message: 'Invalid email or password.'
+        });
       });
-    });
   }
 
   async function handleSignInWithGoogle() {
     setIsLoading(true);
-    signInWithGooglePopup().catch((error) => {
-      console.error(error);
-      setIsLoading(false);
-    });
+    signInWithGooglePopup()
+      .then(() => {
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
   }
 
   return (

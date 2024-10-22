@@ -1,3 +1,4 @@
+'use client';
 import { Footer } from '@components/Footer';
 import { Header } from '@components/Header';
 import { Navbar } from '@components/Navbar';
@@ -8,17 +9,25 @@ import { LoggerProvider } from '@hooks/useLogger';
 import { ThemeProvider } from '@hooks/useTheme';
 import 'src/global.css';
 
-export default function MyApp({ Component, pageProps }) {
+export default function RootLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <AuthProvider>
       <LoggerProvider>
         <CacheProvider>
           <APIProvider>
             <ThemeProvider>
-              <Header />
-              <Navbar />
-              <Component {...pageProps} />
-              <Footer />
+              <html lang="en">
+                <body>
+                  <Header />
+                  <Navbar />
+                  {children}
+                  <Footer />
+                </body>
+              </html>
             </ThemeProvider>
           </APIProvider>
         </CacheProvider>

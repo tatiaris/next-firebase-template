@@ -24,10 +24,11 @@ import {
   getFirestore,
   QueryFieldFilterConstraint
 } from 'firebase/firestore';
+import { config } from 'src/config';
 
 export const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string);
 
-export const app = initializeApp(firebaseConfig, 'frontend');
+export const app = initializeApp(firebaseConfig, config.name);
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const storage = getStorage(app);

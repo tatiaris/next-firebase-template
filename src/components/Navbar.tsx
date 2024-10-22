@@ -3,7 +3,8 @@ import { Button } from "./ui/button";
 import { useAuth } from "@hooks/useAuth";
 import { signOutFromGoogle } from "@lib/firebase";
 import { useRouter } from "next/navigation";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarShortcut, MenubarTrigger } from "./ui/menubar";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
+import Image from "next/image";
 
 /**
  * Navbar component
@@ -28,7 +29,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
           <Menubar className="px-0 py-0 border-0">
             <MenubarMenu>
               <MenubarTrigger className="px-0 py-0 rounded-full overflow-hidden cursor-pointer" automation-id="btn-user-menu">
-                <img src={user.photoURL || "/placeholders/user.jpg"} width={36} height={36} alt="" />
+                <Image src={user.photoURL || "/placeholders/user.jpg"} width={36} height={36} alt="" />
               </MenubarTrigger>
               <MenubarContent side="bottom" align="end">
                 <MenubarItem disabled>

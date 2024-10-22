@@ -14,7 +14,7 @@ import {
 } from "../ui/form";
 import { cn } from "@lib/utils";
 import { Textarea } from "@components/ui/textarea";
-import { useToast } from "@hooks/use-toast";
+import { useToast } from "@hooks/useToast";
 import { useAuth } from "@hooks/useAuth";
 import { addObjectToCollection } from "@lib/firebase";
 import { Timestamp } from "firebase/firestore";

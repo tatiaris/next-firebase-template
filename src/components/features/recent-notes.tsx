@@ -18,21 +18,6 @@ type Note = {
   timestamp: Timestamp
 }
 
-const notes: Note[] = [
-  {
-    authId: "1",
-    name: "John Doe",
-    note: "This is a note that is very long",
-    timestamp: Timestamp.now()
-  },
-  {
-    authId: "2",
-    name: "Jane Doe",
-    note: "This is another note",
-    timestamp: Timestamp.now()
-  }
-]
-
 export default function RecentNotes() {
   const { cache, updateCache } = useCache();
   const cacheLocation = 'notes';
@@ -50,7 +35,7 @@ export default function RecentNotes() {
 
   React.useEffect(() => {
     if (notes === undefined) fetchNotes();
-  }, [notes]);
+  }, [notes, fetchNotes]);
 
   const columns: ColumnDef<Note>[] = [
     {

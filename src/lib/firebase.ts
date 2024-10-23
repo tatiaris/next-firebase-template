@@ -124,6 +124,15 @@ export const getCollection = async (col: string): Promise<QuerySnapshot> => {
   return docs;
 };
 
+export const getCollectionWithIds = async (col: string) => {
+  const [docs, error] = (await awaitData(getDocs, collection(db, col))) as [
+    QuerySnapshot,
+    FirestoreError,
+  ];
+  if (error) handleFirestoreError("getCollectionWithIds", error);
+  return docs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
 export const addObjectWithId = async (col: string, obj: object) => {
   const id = doc(collection(db, col)).id;
   const [setDocError] = (await awaitData(setDoc, doc(db, col, id), {

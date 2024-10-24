@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { DataTable } from "./data-table";
 import Loading from "@components/ui/loading";
-import { deleteDocById, getCollection, getCollectionWithIds, updateObjectById } from "@lib/firebase";
+import { deleteDocById, getCollectionWithIds, updateObjectById } from "@lib/firebase";
 import { Collections } from "@lib/constants";
 import { useCache } from "@hooks/useCache";
 import { z } from "zod";
@@ -11,7 +11,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { Button } from "@components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@components/ui/dropdown-menu";
 import { useAuth } from "@hooks/useAuth";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@components/ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@components/ui/drawer";
 import { Textarea } from "@components/ui/textarea";
 
 /**
@@ -23,6 +23,7 @@ type Note = {
   userId: string
   name: string
   note: string
+  color?: string
   timestamp: Timestamp
 }
 
@@ -31,6 +32,7 @@ const noteSchema = z.object({
   userId: z.string(),
   name: z.string(),
   note: z.string(),
+  color: z.string().optional(),
   timestamp: z.instanceof(Timestamp),
 })
 
@@ -38,6 +40,10 @@ export default function RecentNotes() {
   const { cache, updateCache } = useCache();
   const cacheLocation = 'notes';
   const notes = React.useMemo(() => cache[cacheLocation], [cache]);
+
+  const getRowColor = (row: Row<Note>) => {
+    return noteSchema.parse(row.original).color || 'default';
+  }
 
   const fetchNotes = () => {
     getCollectionWithIds(Collections.Note).then((notesList) => {
@@ -57,6 +63,7 @@ export default function RecentNotes() {
     {
       accessorKey: "note",
       header: "Note",
+      cell: ({ row }) => <div style={{ color: getRowColor(row) }}>{noteSchema.parse(row.original).note}</div>,
     },
     {
       id: "actions",

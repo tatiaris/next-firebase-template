@@ -3,6 +3,7 @@ import { Input } from "@components/ui/input";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { FIELD, FieldObject } from "./utils";
 import { Textarea } from "@components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 /**
  * FieldsRenderer component
@@ -53,6 +54,23 @@ const FieldRender = ({ fieldMetadata, field }: FieldRenderProps) => {
           placeholder={fieldMetadata.placeholder}
           {...field}
         />
+      )
+    case FIELD.SELECT:
+      return (
+        <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <FormControl>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={fieldMetadata.placeholder} />
+            </SelectTrigger>
+          </FormControl>
+          <SelectContent>
+            {fieldMetadata.options?.map((option, i) => (
+              <SelectItem key={`${fieldMetadata.name}-option-${i}`} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )
     default:
       break;

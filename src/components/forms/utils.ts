@@ -4,7 +4,8 @@ import { z } from "zod";
 
 export enum FIELD {
   INPUT = "input",
-  TEXTAREA = "textarea"
+  TEXTAREA = "textarea",
+  SELECT = "select"
 }
 
 export type FieldObject = {
@@ -12,10 +13,11 @@ export type FieldObject = {
   type: FIELD;
   label: string;
   showLabel: boolean;
+  schema: z.ZodString;
   placeholder?: string;
   defaultValue?: string;
   autoComplete?: string;
-  schema: z.ZodString;
+  options?: Array<{ label: string, value: string }>;
 }
 
 export const buildForm = (fields) => {

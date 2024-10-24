@@ -33,13 +33,10 @@ export default function NoteForm({
       timestamp: Timestamp.now(),
       ...values
     }
-    await addObjectToCollection(Collections.Note, noteObj);
-    updateCache('notes', [noteObj, ...cache.notes]);
+    const id = await addObjectToCollection(Collections.Note, noteObj);
+    updateCache('notes', [{ id, ...noteObj }, ...cache.notes]);
     resetForm(form, FIELDS);
-    toast({
-      title: "Note shared!",
-      description: values['note']
-    });
+    toast({ title: "Note shared!" });
     setIsLoading(false);
   }
 
@@ -48,7 +45,7 @@ export default function NoteForm({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-2">
-            <div className="grid gap-1">
+            <div className="grid gap-2">
               <FieldsRenderer form={form} fields={FIELDS} />
             </div>
             <Button

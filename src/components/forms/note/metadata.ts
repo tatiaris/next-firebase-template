@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { FIELD, FieldObject } from "../utils";
+import { Timestamp } from "firebase/firestore";
 
 export const FIELDS: FieldObject[] = [
   {
@@ -36,3 +37,21 @@ export const FIELDS: FieldObject[] = [
     ]
   }
 ]
+
+export type Note = {
+  id: string
+  userId: string
+  name: string
+  note: string
+  color: string
+  timestamp: Timestamp
+}
+
+export const noteSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  name: z.string(),
+  note: z.string(),
+  color: z.string(),
+  timestamp: z.instanceof(Timestamp),
+})

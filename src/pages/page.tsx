@@ -1,4 +1,4 @@
-import RecentNotes from "@components/features/recent-notes";
+import RecentNotes from "@features/recent-notes";
 import LoginForm from "@components/forms/login";
 import NoteForm from "@components/forms/note";
 import Loading, { LoadingComponent } from "@components/ui/loading";

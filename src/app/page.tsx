@@ -3,7 +3,7 @@ import { useAuth } from "@hooks/useAuth";
 import LoginForm from "@components/forms/login";
 import Loading, { LoadingComponent } from "@components/ui/loading";
 import NoteForm from "@components/forms/note";
-import RecentNotes from "@components/features/recent-notes";
+import RecentNotes from "src/features/recent-notes";
 
 export default function Home() {
   const { user, isGuest, isLoading } = useAuth();

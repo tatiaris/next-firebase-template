@@ -1,44 +1,22 @@
 "use client";
 import { useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Icons } from "../ui/icons";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "../ui/form";
+import { Button } from "../../ui/button";
+import { Icons } from "../../ui/icons";
+import { Form } from "../../ui/form";
 import { signInWithEmailPassword, signInWithGooglePopup } from "@lib/firebase";
 import { cn } from "@lib/utils";
-
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Invalid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-});
+import { buildForm } from "../utils";
+import { FIELDS } from "./metadata";
+import { FieldsRenderer } from "../fields-renderer";
 
 export default function LoginForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const { form } = buildForm(FIELDS);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: { email: string, password: string }) {
     setIsLoading(true);
     signInWithEmailPassword(values.email, values.password)
       .then(() => {
@@ -47,7 +25,7 @@ export default function LoginForm({
       .catch((error) => {
         console.error(error);
         setIsLoading(false);
-        form.setError("password", {
+        form.setError("root", {
           type: "manual",
           message: "Invalid email or password.",
         });
@@ -72,39 +50,7 @@ export default function LoginForm({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-2">
             <div className="grid gap-1">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="name@example.com"
-                        autoComplete="email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="password"
-                        autoComplete="current-password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FieldsRenderer form={form} fields={FIELDS} />
             </div>
             <Button
               type="submit"

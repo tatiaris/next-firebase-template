@@ -1,8 +1,8 @@
 "use client";
 import { useAuth } from "@hooks/useAuth";
-import LoginForm from "@components/forms/login-form";
+import LoginForm from "@components/forms/login";
 import Loading, { LoadingComponent } from "@components/ui/loading";
-import NoteForm from "@components/forms/note-form";
+import NoteForm from "@components/forms/note";
 import RecentNotes from "@components/features/recent-notes";
 
 export default function Home() {

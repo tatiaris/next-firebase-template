@@ -1,6 +1,6 @@
 import RecentNotes from "@components/features/recent-notes";
-import LoginForm from "@components/forms/login-form";
-import NoteForm from "@components/forms/note-form";
+import LoginForm from "@components/forms/login";
+import NoteForm from "@components/forms/note";
 import Loading, { LoadingComponent } from "@components/ui/loading";
 import { useAuth } from "@hooks/useAuth";
 

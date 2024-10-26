@@ -57,7 +57,7 @@ const FieldRender = ({ fieldMetadata, field }: FieldRenderProps) => {
       )
     case FIELD.SELECT:
       return (
-        <Select onValueChange={field.onChange} defaultValue={field.value}>
+        <Select name={field.name} onValueChange={field.onChange} defaultValue={field.value}>
           <FormControl>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={fieldMetadata.placeholder} />

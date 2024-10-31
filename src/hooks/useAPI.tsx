@@ -1,79 +1,56 @@
-import { useCallback, createContext, useContext } from "react";
-import { and, where } from "firebase/firestore";
-import { Session, UserObjectDB } from "src/lib/types";
-import { Collections } from "src/lib/constants";
-import { findObjectsByFilter } from "@lib/firebase";
+import { useCallback, createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./useAuth";
+import { addObjectToCollection, deleteDocById, getCollectionWithIds, updateObjectById } from "@lib/firebase";
+import { Collections } from "@lib/constants";
+import { Note } from "@components/forms/note/metadata";
 
-export const APIContext = createContext<ReturnType<typeof useAPI>>({
-  fetchSession: async () => null,
-  getUnreadNotificationsCount: async () => 0,
-  fetchProfileByUsername: async () => null,
-  fetchProfileById: async () => null,
-});
-
-export type API = {
-  fetchSession: () => Promise<Session>;
-  getUnreadNotificationsCount: () => Promise<number>;
-  fetchProfileByUsername: (username: string) => Promise<UserObjectDB>;
-  fetchProfileById: (id: string) => Promise<UserObjectDB>;
-};
+export const APIContext = createContext<{
+  isLoading: boolean;
+  generateRandomNote: () => Promise<string>;
+  fetchNotes: () => Promise<Note[]>;
+  addNote: (note: Partial<Note>) => Promise<Note>;
+  updateNote: (note: Partial<Note>) => Promise<void>;
+  deleteNote: (note: Note) => Promise<string>;
+} | null>(null);
 
 export function APIProvider({ children }) {
-  const fetchIdFromUsername = async (username: string): Promise<string | undefined> => {
-    const user = (await findObjectsByFilter(
-      Collections.User,
-      and(where("username", "==", username)),
-    )) as UserObjectDB[];
-    if (user.length === 0) return undefined;
-    return user[0].id;
-  };
+  const auth = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+  const [authHeader, setAuthHeader] = useState<RequestInit>({});
 
-  const fetchSession = useCallback(async (): Promise<Session | null> => {
-    const response = await fetch(`/api/auth/session`);
-    const resJson = await response.json();
-    const session = resJson.session;
-    if ("username" in session) {
-      return session;
+  useEffect(() => {
+    if (auth.user) {
+      auth.user.getIdToken().then((token) => {
+        setAuthHeader({
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setIsLoading(false);
+      });
+    } else {
+      setAuthHeader({});
+      setIsLoading(false);
     }
-    return null;
-  }, []);
+  }, [auth.user]);
 
-  const getUnreadNotificationsCount = useCallback(async (): Promise<number> => {
-    return 1;
-  }, []);
+  const get = useCallback((url: string, options: RequestInit = {}) =>
+    fetch(url, { ...authHeader, ...options }).then((res) => res.json()), [authHeader]);
 
-  const fetchProfileByUsername = async (
-    username: string,
-  ): Promise<UserObjectDB | null> => {
-    const id = await fetchIdFromUsername(username);
-    const res = await fetch(`/api/user/${id}/profile`);
-    const resData = await res.json();
-    if (!resData.success) {
-      console.error("Error getAllUserDataByUsername:", resData);
-      return null;
-    }
-    return resData.data;
-  };
+  const generateRandomNote = (): Promise<string> => get('/openai');
 
-  const fetchProfileById = async (id: string): Promise<UserObjectDB | null> => {
-    const res = await fetch(`/api/user/${id}/profile`);
-    const resData = await res.json();
-    if (!resData.success) {
-      console.error("Error getAllUserDataByUsername:", resData);
-      return null;
-    }
-    return resData.data;
-  };
+  const fetchNotes = (): Promise<Note[]> => getCollectionWithIds(Collections.Note);
+  const addNote = (note: Partial<Note>): Promise<Note> => addObjectToCollection(Collections.Note, note);
+  const updateNote = (note: Partial<Note> & { id: string }): Promise<void> => updateObjectById(Collections.Note, note.id, note);
+  const deleteNote = (note: Note): Promise<string> => deleteDocById(Collections.Note, note.id);
 
   return (
-    <APIContext.Provider
-      value={{
-        fetchSession,
-        getUnreadNotificationsCount,
-        fetchProfileByUsername,
-        fetchProfileById,
-      }}
-    >
+    <APIContext.Provider value={{
+      isLoading,
+      generateRandomNote,
+      fetchNotes,
+      addNote,
+      updateNote,
+      deleteNote,
+    }}>
       {children}
     </APIContext.Provider>
   );

@@ -4,6 +4,7 @@ import LoginForm from "@components/forms/login";
 import Loading, { LoadingComponent } from "@components/ui/loading";
 import NoteForm from "@components/forms/note";
 import RecentNotes from "src/features/recent-notes";
+import { FORM_TYPE } from "@components/forms/utils";
 
 export default function Home() {
   const { user, isGuest, isLoading } = useAuth();
@@ -18,7 +19,7 @@ export default function Home() {
 
   return !isGuest && user ? (
     <div className="py-8 px-8">
-      <NoteForm />
+      <NoteForm formType={FORM_TYPE.CREATE} />
       <br /><br />
       <RecentNotes />
     </div>

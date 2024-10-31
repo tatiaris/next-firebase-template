@@ -8,7 +8,10 @@ import { AuthProvider } from "@hooks/useAuth";
 import { CacheProvider } from "@hooks/useCache";
 import { LoggerProvider } from "@hooks/useLogger";
 import { ThemeProvider } from "@hooks/useTheme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "src/global.css";
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
@@ -16,24 +19,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthProvider>
-      <LoggerProvider>
-        <CacheProvider>
-          <APIProvider>
-            <ThemeProvider>
-              <html lang="en">
-                <body>
-                  <Header />
-                  <Navbar />
-                  {children}
-                  <Footer />
-                  <Toaster />
-                </body>
-              </html>
-            </ThemeProvider>
-          </APIProvider>
-        </CacheProvider>
-      </LoggerProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <LoggerProvider>
+          <CacheProvider>
+            <APIProvider>
+              <ThemeProvider>
+                <html lang="en">
+                  <body>
+                    <Header />
+                    <Navbar />
+                    {children}
+                    <Footer />
+                    <Toaster />
+                  </body>
+                </html>
+              </ThemeProvider>
+            </APIProvider>
+          </CacheProvider>
+        </LoggerProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

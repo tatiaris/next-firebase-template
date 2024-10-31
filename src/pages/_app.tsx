@@ -7,24 +7,29 @@ import { AuthProvider } from "@hooks/useAuth";
 import { CacheProvider } from "@hooks/useCache";
 import { LoggerProvider } from "@hooks/useLogger";
 import { ThemeProvider } from "@hooks/useTheme";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "src/global.css";
+
+const queryClient = new QueryClient();
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <AuthProvider>
-      <LoggerProvider>
-        <CacheProvider>
-          <APIProvider>
-            <ThemeProvider>
-              <Header />
-              <Navbar />
-              <Component {...pageProps} />
-              <Footer />
-              <Toaster />
-            </ThemeProvider>
-          </APIProvider>
-        </CacheProvider>
-      </LoggerProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <LoggerProvider>
+          <CacheProvider>
+            <APIProvider>
+              <ThemeProvider>
+                <Header />
+                <Navbar />
+                <Component {...pageProps} />
+                <Footer />
+                <Toaster />
+              </ThemeProvider>
+            </APIProvider>
+          </CacheProvider>
+        </LoggerProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

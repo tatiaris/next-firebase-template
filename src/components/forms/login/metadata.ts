@@ -8,6 +8,7 @@ export const FIELDS: FieldObject[] = [
     label: 'Email',
     showLabel: false,
     placeholder: 'username@example.com',
+    allowUpdate: false,
     defaultValue: '',
     autoComplete: 'email',
     schema: z.string().email({
@@ -19,6 +20,7 @@ export const FIELDS: FieldObject[] = [
     type: FIELD.INPUT,
     label: 'Password',
     showLabel: false,
+    allowUpdate: false,
     placeholder: 'password',
     defaultValue: '',
     autoComplete: 'current-password',

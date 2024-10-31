@@ -8,6 +8,7 @@ export const FIELDS: FieldObject[] = [
     type: FIELD.TEXTAREA,
     label: 'Note',
     showLabel: false,
+    allowUpdate: true,
     placeholder: 'Share a note with the world!',
     defaultValue: '',
     schema: z.string({
@@ -21,6 +22,7 @@ export const FIELDS: FieldObject[] = [
     type: FIELD.SELECT,
     label: 'Color',
     showLabel: false,
+    allowUpdate: true,
     placeholder: 'Choose a color',
     defaultValue: '',
     schema: z.string({

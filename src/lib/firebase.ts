@@ -105,14 +105,14 @@ const handleFirestoreError = (actionName: string, error: FirestoreError) => {
   throw new Error(`${actionName}: ${error.code} - ${error.message}`);
 };
 
-export const addObjectToCollection = async (col: string, obj: object) => {
+export const addObjectToCollection = async (col: string, obj: object): Promise<any> => {
   const [docRef, error] = (await awaitData(
     addDoc,
     collection(db, col),
     obj,
   )) as [DocumentReference, FirestoreError];
   if (error) handleFirestoreError("addObjectToCollection", error);
-  return docRef.id;
+  return { id: docRef.id, ...obj };
 };
 
 export const getCollection = async (col: string): Promise<QuerySnapshot> => {
@@ -124,7 +124,7 @@ export const getCollection = async (col: string): Promise<QuerySnapshot> => {
   return docs;
 };
 
-export const getCollectionWithIds = async (col: string) => {
+export const getCollectionWithIds = async (col: string): Promise<any> => {
   const [docs, error] = (await awaitData(getDocs, collection(db, col))) as [
     QuerySnapshot,
     FirestoreError,
@@ -166,7 +166,7 @@ export const updateObjectById = async (
   colName: string,
   id: string,
   updatedValues: object,
-) => {
+): Promise<void> => {
   const [updateDocError] = (await awaitData(
     updateDoc,
     doc(db, colName, id),
@@ -188,11 +188,10 @@ export const updateOrAddObjectById = async (
   await setDoc(docRef, updatedValues);
 };
 
-export const deleteDocById = async (col: string, id: string) => {
-  const [deleteDocError] = (await awaitData(deleteDoc, doc(db, col, id))) as [
-    FirestoreError,
-  ];
+export const deleteDocById = async (col: string, id: string): Promise<string> => {
+  const [deleteDocError] = (await awaitData(deleteDoc, doc(db, col, id))) as [FirestoreError];
   if (deleteDocError) handleFirestoreError("deleteDocById", deleteDocError);
+  return id;
 };
 
 export const deleteDocsByFilter = async (

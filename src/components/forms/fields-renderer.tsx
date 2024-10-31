@@ -1,19 +1,23 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form";
 import { Input } from "@components/ui/input";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
-import { FIELD, FieldObject } from "./utils";
+import { FIELD, FieldObject, FORM_TYPE } from "./utils";
 import { Textarea } from "@components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 
 /**
  * FieldsRenderer component
  */
+
 type FieldsRendererProps = {
   form: UseFormReturn<any>,
-  fields: FieldObject[]
-}
-const FieldsRenderer = ({ form, fields }: FieldsRendererProps) =>
+  fields: FieldObject[],
+  formType?: FORM_TYPE
+};
+
+const FieldsRenderer = ({ form, fields, formType = FORM_TYPE.CREATE }: FieldsRendererProps) =>
   fields.map((f, i) => {
+    if (formType === FORM_TYPE.UPDATE && !f.allowUpdate) return <></>;
     return (
       <FormField
         key={`${f.name}-field-${i}`}

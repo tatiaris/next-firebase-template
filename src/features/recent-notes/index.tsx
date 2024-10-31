@@ -7,28 +7,19 @@ import { Collections } from "@lib/constants";
 import { useCache } from "@hooks/useCache";
 import { Note, noteSchema } from "@components/forms/note/metadata";
 import { DataTableRowActions } from "./data-table-row-actions";
+import useAPI from "@hooks/useAPI";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Recent Notes component
  */
 export default function RecentNotes() {
-  const { cache, updateCache } = useCache();
-  const cacheLocation = 'notes';
-  const notes = React.useMemo(() => cache[cacheLocation], [cache]);
+  const api = useAPI();
+  const notes = useQuery({ queryKey: ["notes"], queryFn: api?.fetchNotes });
 
   const getRowColor = (row: Row<Note>) => {
     return noteSchema.parse(row.original).color || 'default';
   }
-
-  const fetchNotes = () => {
-    getCollectionWithIds(Collections.Note).then((notesList) => {
-      updateCache(cacheLocation, notesList);
-    });
-  }
-
-  React.useEffect(() => {
-    if (notes === undefined) fetchNotes();
-  }, [notes, fetchNotes]);
 
   const columns: ColumnDef<Note>[] = [
     {
@@ -46,9 +37,10 @@ export default function RecentNotes() {
     }
   ];
 
-  if (notes === undefined) return <Loading />;
+  if (notes.isLoading) return <Loading />;
+  if (notes.isError || notes.data === undefined) return <div>Error: {notes.error?.message}</div>;
   return (
-    <DataTable columns={columns} data={notes} />
+    <DataTable columns={columns} data={notes.data} />
   );
 };
 

@@ -63,7 +63,7 @@ const FieldRender = ({ fieldMetadata, field }: FieldRenderProps) => {
       return (
         <Select name={field.name} onValueChange={field.onChange} defaultValue={field.value}>
           <FormControl>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px]" aria-label={fieldMetadata.placeholder}>
               <SelectValue placeholder={fieldMetadata.placeholder} />
             </SelectTrigger>
           </FormControl>

@@ -28,7 +28,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
         {(!isGuest && user) && (
           <Menubar className="px-0 py-0 border-0">
             <MenubarMenu>
-              <MenubarTrigger className="px-0 py-0 rounded-full overflow-hidden cursor-pointer" automation-id="btn-user-menu">
+              <MenubarTrigger aria-label="account menu button" className="px-0 py-0 rounded-full overflow-hidden cursor-pointer" automation-id="btn-user-menu">
                 <Image src={user.photoURL || "/placeholders/user.jpg"} width={36} height={36} alt="" />
               </MenubarTrigger>
               <MenubarContent side="bottom" align="end">

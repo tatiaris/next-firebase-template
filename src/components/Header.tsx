@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
       <meta
         name="description"
         content={header.description || config.description}
-      ></meta>
+      />
       <meta
         name="viewport"
         content="user-scalable=yes, initial-scale=1, maximum-scale=5, minimum-scale=1, width=device-width"

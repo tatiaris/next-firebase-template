@@ -1,44 +1,18 @@
-"use client";
-import { Footer } from "@components/Footer";
-import { Header } from "@components/Header";
-import { Navbar } from "@components/Navbar";
-import { Toaster } from "@components/ui/toaster";
-import { APIProvider } from "@hooks/useAPI";
-import { AuthProvider } from "@hooks/useAuth";
-import { CacheProvider } from "@hooks/useCache";
-import { LoggerProvider } from "@hooks/useLogger";
-import { ThemeProvider } from "@hooks/useTheme";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "src/global.css";
+import Providers from "./providers";
+import { config } from "src/config";
+import { Metadata } from "next";
 
-const queryClient = new QueryClient();
+export const metadata: Metadata = {
+  title: config.name,
+  description: config.description,
+  authors: config.authors,
+  icons: config.favicon,
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LoggerProvider>
-          <CacheProvider>
-            <APIProvider>
-              <ThemeProvider>
-                <html lang="en">
-                  <body>
-                    <Header />
-                    <Navbar />
-                    {children}
-                    <Footer />
-                    <Toaster />
-                  </body>
-                </html>
-              </ThemeProvider>
-            </APIProvider>
-          </CacheProvider>
-        </LoggerProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+/**
+ * Root layout component
+ */
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <Providers>{children}</Providers>;
 }

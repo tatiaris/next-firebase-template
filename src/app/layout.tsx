@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: config.description,
   authors: config.authors,
   icons: config.favicon,
+  keywords: config.keywords,
 }
 
 /**

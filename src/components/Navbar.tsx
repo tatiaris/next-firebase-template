@@ -23,6 +23,9 @@ export const Navbar: React.FC = (): React.ReactElement => {
         <Button variant="link" onClick={() => router.push("/page")}>
           Page
         </Button>
+        <Button variant="link" onClick={() => router.push("/search")}>
+          Search
+        </Button>
       </div>
       <div>
         {(!isGuest && user) && (

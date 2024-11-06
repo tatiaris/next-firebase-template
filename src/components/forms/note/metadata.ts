@@ -46,7 +46,10 @@ export type Note = {
   name: string
   note: string
   color: string
-  timestamp: Timestamp
+  timestamp: Timestamp | {
+    _seconds: number
+    _nanoseconds: number
+  }
 }
 
 export const noteSchema = z.object({

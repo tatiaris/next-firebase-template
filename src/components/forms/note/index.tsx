@@ -56,7 +56,7 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
 
   const updateNote = useMutation({
     mutationKey: ["notes"],
-    mutationFn: (updatedNote: Partial<Note>) => api?.updateNote({ id: note.id, ...updatedNote }) as Promise<void>,
+    mutationFn: (updatedNote: Partial<Note>) => api.updateNote({ id: note.id, ...updatedNote }) as Promise<void>,
     onSuccess: () => {
       queryClient.setQueryData(['notes'], (old: Note[]) => old.map((n) => n.id === note.id ? { ...n, ...updatedValues } : n));
       toast({ title: "Note updated!" });

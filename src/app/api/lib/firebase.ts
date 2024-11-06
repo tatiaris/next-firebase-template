@@ -18,6 +18,7 @@ if (fs.apps.length === 0) {
 }
 
 export const db: Firestore = fs.firestore();
+export const auth = fs.auth();
 
 export const getSampleData = async () => {
   const collections = await db.listCollections();

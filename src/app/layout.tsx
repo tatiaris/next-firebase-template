@@ -1,7 +1,7 @@
-import "src/global.css";
 import Providers from "./providers";
 import { config } from "src/config";
 import { Metadata } from "next";
+import "src/global.css";
 
 export const metadata: Metadata = {
   title: config.name,

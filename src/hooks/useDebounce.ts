@@ -1,21 +1,33 @@
 import { useEffect, useState } from "react";
 
-const useDebounce = (searchFunction, searchQuery, delay) => {
-  const [debounced, setDebounced] = useState(null);
+type UseDebounceReturn<T> = [boolean, T];
+
+function useDebounce<T>(
+  searchFunction: (query: string) => Promise<T>,
+  searchQuery: string,
+  cleanup: (t: T) => T = (t) => t,
+  delay: number = 500,
+  initialData: T = {} as T,
+): UseDebounceReturn<T> {
+  const [debounced, setDebounced] = useState<T>(initialData);
   const [inProgress, setInProgress] = useState(false);
 
   useEffect(() => {
     if (searchQuery === "") {
-      setDebounced(null);
+      setDebounced(initialData);
       setInProgress(false);
       return;
     }
 
     setInProgress(true);
     const timeoutId = setTimeout(async () => {
-      const results = await searchFunction(searchQuery);
-      setDebounced(results);
-      setInProgress(false);
+      searchFunction(searchQuery).then((results) => {
+        setDebounced(cleanup(results));
+        setInProgress(false);
+      }).catch(() => {
+        setDebounced(initialData);
+        setInProgress(false);
+      });
     }, delay);
 
     return () => {
@@ -24,6 +36,6 @@ const useDebounce = (searchFunction, searchQuery, delay) => {
   }, [searchQuery, delay, searchFunction]);
 
   return [inProgress, debounced];
-};
+}
 
 export default useDebounce;

@@ -8,7 +8,6 @@ import { CacheProvider } from "@hooks/useCache";
 import { LoggerProvider } from "@hooks/useLogger";
 import { ThemeProvider } from "@hooks/useTheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "src/global.css";
 
 const queryClient = new QueryClient();
 

@@ -190,3 +190,51 @@ export const deleteCollection = async (colName: string) => {
 export const deleteFile = async (path: string) => {
   await fs.storage().bucket().file(path).delete();
 };
+
+type SearchResult = {
+  id: string;
+  wordCount?: number;
+} & Record<string, any>;
+
+export const searchKeywords = async <T extends SearchResult>(collection: string, query: string): Promise<T[]> => {
+  try {
+    const collectionRef = db.collection(collection);
+    const queryWords = query.trim().toLowerCase().split(/\s+/);
+
+    let results: T[] = [];
+
+    for (const word of queryWords) {
+      const snapshot = await collectionRef.where('keywords', 'array-contains', word).get();
+
+      const wordResults = snapshot.docs.map((doc) => {
+        const data = doc.data() as T;
+        delete data.words;
+        data.id = doc.id;
+        data.wordCount = 1;
+        return data;
+      });
+
+      results = [...results, ...wordResults];
+    }
+
+    // Combine results and calculate the number of matching words for each document
+    const resultMap: Record<string, T> = results.reduce((acc, result) => {
+      if (acc[result.id]) {
+        acc[result.id].wordCount = (acc[result.id].wordCount || 0) + 1;
+      } else {
+        acc[result.id] = result;
+      }
+      return acc;
+    }, {} as Record<string, T>);
+
+    // Convert resultMap to an array and sort by wordCount in descending order
+    const uniqueResults = Object.values(resultMap).sort((a, b) => (b.wordCount || 0) - (a.wordCount || 0));
+
+    uniqueResults.forEach((result) => delete result.wordCount);
+
+    return uniqueResults;
+  } catch (error) {
+    console.error('Error searching keywords:', error);
+    return [];
+  }
+};

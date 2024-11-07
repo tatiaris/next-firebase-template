@@ -67,10 +67,12 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
   });
 
   async function onCreateSubmit(values: z.infer<typeof schema>) {
+    values['keywords'] = values['note'].toLowerCase().split(/\s+/);
     createNote.mutate(values);
   }
 
   async function onUpdateSubmit(values: z.infer<typeof schema>) {
+    if (values['note'].length > 0) values['keywords'] = values['note'].toLowerCase().split(/\s+/);
     setUpdatedValues(values);
     updateNote.mutate(values);
   }

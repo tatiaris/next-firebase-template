@@ -1,27 +1,20 @@
 import { authenticate, errorResponse } from "@api/lib/auth"
-import { HttpStatus } from "@lib/constants";
+import { searchKeywords } from "@api/lib/firebase";
+import { Note } from "@components/forms/note/metadata";
+import { Collections, HttpStatus } from "@lib/constants";
 import { NextRequest } from "next/server"
 
-export const dynamic = 'auto'
-export const revalidate = 60
+export const dynamic = 'auto';
+export const revalidate = 60;
 
 export async function GET(request: NextRequest) {
   const [authenticated] = await authenticate(request);
   if (!authenticated) return errorResponse(HttpStatus.Unauthorized);
 
-  const data = [
-    {
-      "id": "0",
-      "timestamp": {
-        "_seconds": 1630598400,
-        "_nanoseconds": 0
-      },
-      "note": "currently in works!",
-      "userId": "0",
-      "name": "Rishabh Tatia",
-      "color": "#fde047"
-    }
-  ]
+  const query = request.nextUrl.searchParams.get('q');
+  if (!query) return Response.json([]);
+
+  const data = await searchKeywords<Note>(Collections.Note, query);
 
   return Response.json(data);
 }

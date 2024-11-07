@@ -46,6 +46,7 @@ export type Note = {
   name: string
   note: string
   color: string
+  keywords?: string[]
   timestamp: Timestamp | {
     _seconds: number
     _nanoseconds: number

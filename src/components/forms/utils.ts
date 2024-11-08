@@ -19,7 +19,7 @@ export type FieldObject = {
   type: FIELD;
   label: string;
   showLabel: boolean;
-  schema: z.ZodString | z.AnyZodObject | ZodType<File, ZodTypeDef, File>;
+  schema: z.ZodType<any, any, any>;
   allowUpdate: boolean;
   placeholder?: string;
   defaultValue?: string;

@@ -48,11 +48,8 @@ export const FIELDS: FieldObject[] = [
     showLabel: false,
     allowUpdate: true,
     placeholder: 'Attach image',
-    defaultValue: '',
     className: 'cursor-pointer',
-    schema: z.custom<File>((v) => v instanceof File, {
-      message: 'Image is required',
-    })
+    schema: z.custom<File>((v) => v instanceof File).optional(),
   }
 ]
 

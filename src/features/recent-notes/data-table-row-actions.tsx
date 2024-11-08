@@ -25,7 +25,10 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
 
   const deleteNote = useMutation({
     mutationKey: ["notes"],
-    mutationFn: (note: Note) => api.deleteNote(note) as Promise<string>,
+    mutationFn: async (note: Note) => {
+      if (note.image) await api.deleteFile(note.image);
+      return api.deleteNote(note) as Promise<string>
+    },
     onSuccess: () => {
       queryClient.setQueryData(['notes'], (old: Note[]) => old.filter((n) => n.id !== note.id));
       toast({ title: "Note deleted!" });

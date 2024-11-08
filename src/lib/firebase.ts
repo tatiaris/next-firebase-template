@@ -51,15 +51,6 @@ const googleProvider = new GoogleAuthProvider();
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-interface UploadFileResponse {
-  success: boolean;
-  message: string;
-  data: {
-    downloadURL: string;
-    fixedPath: string;
-  } | null;
-}
-
 type DataFunction = (...params: any[]) => Promise<any>;
 
 export const signInWithGooglePopup = async () => {
@@ -263,6 +254,14 @@ export const checkIfFileExists = async (filePath: string): Promise<boolean> => {
  * @param {boolean} [replace=false] - Whether to replace the file if it already exists.
  * @returns {Promise<UploadFileResponse>} - A promise that resolves to the upload response.
  */
+export interface UploadFileResponse {
+  success: boolean;
+  message: string;
+  data: {
+    downloadURL: string;
+    fixedPath: string;
+  } | null;
+}
 export const uploadFile = async (
   file: File,
   path: string,
@@ -313,9 +312,13 @@ const generateUniqueFilePath = async (
   return fixedPath;
 };
 
-export const deleteFile = async (
-  path: string,
-): Promise<{ success: boolean; message: string, error?: any }> => {
+interface DeleteFileResponse {
+  success: boolean;
+  message: string;
+  error?: StorageError;
+}
+export const deleteFile = async (path: string): Promise<DeleteFileResponse> => {
+  if (!path || path === "") return { success: true, message: "File does not exist" };
   const storageRef = ref(storage, path);
   try {
     await deleteObject(storageRef);

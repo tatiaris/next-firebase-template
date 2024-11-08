@@ -7,6 +7,7 @@ import { DataTableRowActions } from "./data-table-row-actions";
 import useAPI from "@hooks/useAPI";
 import { useQuery } from "@tanstack/react-query";
 import { TIME } from "@lib/constants";
+import Image from "next/image";
 
 /**
  * Recent Notes component
@@ -28,7 +29,20 @@ export default function RecentNotes() {
     {
       accessorKey: "note",
       header: "Note",
-      cell: ({ row }) => <div style={{ color: getRowColor(row) }}>{noteSchema.parse(row.original).note}</div>,
+      cell: ({ row }) => (
+        <div style={{ color: getRowColor(row) }}>
+          {noteSchema.parse(row.original).note}
+          {noteSchema.parse(row.original).image && (
+            <Image
+              src={noteSchema.parse(row.original).image || ''}
+              alt="note image"
+              className="rounded-sm width-auto height-auto"
+              width={100}
+              height={100}
+            />
+          )}
+        </div>
+      ),
     },
     {
       id: "actions",

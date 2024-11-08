@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +14,6 @@ import { FIELDS, Note } from "./metadata";
 import { FieldsRenderer } from "../fields-renderer";
 import { buildForm, FORM_TYPE, resetForm } from "../utils";
 import { useWatch } from "react-hook-form";
-import { uploadFile } from "@lib/firebase";
 
 /**
  * NoteForm component
@@ -46,15 +45,15 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
       const img = image as File;
       let imgUrl = "";
       if (img) {
-        const imageUpload = await uploadFile(img, "please");
-        if (!imageUpload) throw new Error("Error uploading image");
+        const imageUpload = await api.uploadFile(img, img.name.split(".")[0]);
+        if (!imageUpload || !imageUpload.data?.downloadURL) throw new Error("Error uploading image");
         imgUrl = imageUpload.data?.downloadURL || "";
       }
+      values['image'] = imgUrl;
       return api.addNote({
         userId: auth.user.uid,
         name: auth.user.displayName || auth.user.email,
         timestamp: Timestamp.now(),
-        image: imgUrl,
         ...values,
       }) as Promise<Note>;
     },
@@ -70,7 +69,16 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
 
   const updateNote = useMutation({
     mutationKey: ["notes"],
-    mutationFn: (updatedNote: Partial<Note>) => api.updateNote({ id: note.id, ...updatedNote }) as Promise<void>,
+    mutationFn: async (updatedNote: Partial<Note>): Promise<void> => {
+      if (updatedNote.image && ((updatedNote.image as any) instanceof File)) {
+        await api.deleteFile(note.image || "");
+        const img = updatedNote.image as any as File;
+        const imageUpload = await api.uploadFile((img), img.name.split(".")[0]);
+        if (!imageUpload || !imageUpload.data?.downloadURL) throw new Error("Error uploading image");
+        updatedNote.image = imageUpload.data?.downloadURL || "";
+      }
+      return api.updateNote({ id: note.id, ...updatedNote });
+    },
     onSuccess: () => {
       queryClient.setQueryData(['notes'], (old: Note[]) => old.map((n) => n.id === note.id ? { ...n, ...updatedValues } : n));
       toast({ title: "Note updated!" });
@@ -100,11 +108,11 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
               <FieldsRenderer form={form} fields={FIELDS} formType={formType} />
             </div>
             <div id="image-preview">
-              {image && <img
-                src={URL.createObjectURL(image)}
+              {image ? <img
+                src={((image as any) instanceof File) ? URL.createObjectURL(image) : image}
                 alt="Preview"
                 className="h-32 object-cover rounded-lg shadow-md"
-              />}
+              /> : <></>}
             </div>
             <Button
               type="submit"

@@ -1,6 +1,6 @@
 import { useCallback, createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useAuth } from "./useAuth";
-import { addObjectToCollection, deleteDocById, getCollectionWithIds, updateObjectById } from "@lib/firebase";
+import { addObjectToCollection, deleteDocById, deleteFile, getCollectionWithIds, updateObjectById, uploadFile, UploadFileResponse } from "@lib/firebase";
 import { Collections } from "@lib/constants";
 import { Note } from "@components/forms/note/metadata";
 
@@ -11,6 +11,8 @@ type APIMethods = {
   updateNote: (note: Partial<Note> & { id: string }) => Promise<void>;
   deleteNote: (note: Note) => Promise<string>;
   queryNotes: (query: string) => Promise<Note[]>;
+  uploadFile: (file: File, path: string, replace?: boolean) => Promise<UploadFileResponse>;
+  deleteFile: (path: string) => Promise<{ success: boolean; message: string, error?: any }>;
 };
 
 const APIContext = createContext<APIMethods | undefined>(undefined);
@@ -40,7 +42,9 @@ export function APIProvider({ children }: { children: ReactNode }) {
     addNote: (note) => addObjectToCollection(Collections.Note, note),
     updateNote: (note) => updateObjectById(Collections.Note, note.id, note),
     deleteNote: (note) => deleteDocById(Collections.Note, note.id),
-    queryNotes: (query) => get(`/api/notes?q=${query}`)
+    queryNotes: (query) => get(`/api/notes?q=${query}`),
+    uploadFile: (file: File, path: string, replace = false) => uploadFile(file, path, replace),
+    deleteFile: (path: string) => deleteFile(path),
   };
 
   return <APIContext.Provider value={apiMethods}>{children}</APIContext.Provider>;

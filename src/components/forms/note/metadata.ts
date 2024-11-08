@@ -76,5 +76,6 @@ export const noteSchema = z.object({
   name: z.string(),
   note: z.string(),
   color: z.string(),
+  image: z.string().optional(),
   timestamp: z.instanceof(Timestamp),
 })

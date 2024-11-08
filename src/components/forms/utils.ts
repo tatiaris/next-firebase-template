@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z, ZodType, ZodTypeDef } from "zod";
 
 export enum FORM_TYPE {
   CREATE = 'create',
@@ -10,7 +10,8 @@ export enum FORM_TYPE {
 export enum FIELD {
   INPUT = "input",
   TEXTAREA = "textarea",
-  SELECT = "select"
+  SELECT = "select",
+  IMAGE = "image",
 }
 
 export type FieldObject = {
@@ -18,11 +19,12 @@ export type FieldObject = {
   type: FIELD;
   label: string;
   showLabel: boolean;
-  schema: z.ZodString;
+  schema: z.ZodString | z.AnyZodObject | ZodType<File, ZodTypeDef, File>;
   allowUpdate: boolean;
   placeholder?: string;
   defaultValue?: string;
   autoComplete?: string;
+  className?: string;
   options?: Array<{ label: string, value: string }>;
 }
 

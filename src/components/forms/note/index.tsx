@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { Timestamp } from "firebase/firestore";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +13,8 @@ import { useAuth } from "@hooks/useAuth";
 import { FIELDS, Note } from "./metadata";
 import { FieldsRenderer } from "../fields-renderer";
 import { buildForm, FORM_TYPE, resetForm } from "../utils";
+import { useWatch } from "react-hook-form";
+import { uploadFile } from "@lib/firebase";
 
 /**
  * NoteForm component
@@ -32,15 +34,27 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
   const note = isUpdateForm ? props.note as Note : {} as Note;
   const { form, schema } = buildForm(FIELDS, isUpdateForm ? { defaultValues: note } : {});
   const [updatedValues, setUpdatedValues] = React.useState<Partial<Note>>({});
+  const image = useWatch({
+    control: form.control,
+    name: "image" as never,
+  });
 
   const createNote = useMutation({
     mutationKey: ["notes"],
-    mutationFn: (values: z.infer<typeof schema>) => {
+    mutationFn: async (values: z.infer<typeof schema>) => {
       if (!auth.user || !api || !auth.user.email) throw new Error("Something went wrong");
+      const img = image as File;
+      let imgUrl = "";
+      if (img) {
+        const imageUpload = await uploadFile(img, "please");
+        if (!imageUpload) throw new Error("Error uploading image");
+        imgUrl = imageUpload.data?.downloadURL || "";
+      }
       return api.addNote({
         userId: auth.user.uid,
         name: auth.user.displayName || auth.user.email,
         timestamp: Timestamp.now(),
+        image: imgUrl,
         ...values,
       }) as Promise<Note>;
     },
@@ -84,6 +98,13 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
           <div className="grid gap-2">
             <div className="grid gap-2">
               <FieldsRenderer form={form} fields={FIELDS} formType={formType} />
+            </div>
+            <div id="image-preview">
+              {image && <img
+                src={URL.createObjectURL(image)}
+                alt="Preview"
+                className="h-32 object-cover rounded-lg shadow-md"
+              />}
             </div>
             <Button
               type="submit"

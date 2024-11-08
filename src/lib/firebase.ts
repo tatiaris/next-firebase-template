@@ -244,17 +244,15 @@ export const findObjectById = async (
  */
 export const checkIfFileExists = async (filePath: string): Promise<boolean> => {
   const storageRef = ref(storage, filePath);
+
   try {
-    await getMetadata(storageRef);
+    await getDownloadURL(storageRef);
     return true;
-  } catch (error) {
-    if (
-      error instanceof StorageError &&
-      error.code === "storage/object-not-found"
-    ) {
+  } catch (error: any) {
+    if (error.code === "storage/object-not-found") {
       return false;
     }
-    throw error; // Re-throw other errors
+    throw error;
   }
 };
 
@@ -268,7 +266,7 @@ export const checkIfFileExists = async (filePath: string): Promise<boolean> => {
 export const uploadFile = async (
   file: File,
   path: string,
-  replace = false,
+  replace = false
 ): Promise<UploadFileResponse> => {
   try {
     const fixedPath = await generateUniqueFilePath(path, replace);
@@ -300,7 +298,7 @@ export const uploadFile = async (
  */
 const generateUniqueFilePath = async (
   path: string,
-  replace: boolean,
+  replace: boolean
 ): Promise<string> => {
   if (replace) return path;
 

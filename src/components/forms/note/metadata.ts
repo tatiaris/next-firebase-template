@@ -2,6 +2,9 @@ import { z } from "zod";
 import { FIELD, FieldObject } from "../utils";
 import { Timestamp } from "firebase/firestore";
 
+const MAX_FILE_SIZE = 5000000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
 export const FIELDS: FieldObject[] = [
   {
     name: 'note',
@@ -37,6 +40,19 @@ export const FIELDS: FieldObject[] = [
       { label: 'Red', value: '#fda5a5' },
       { label: 'Purple', value: '#d8b4fe' }
     ]
+  },
+  {
+    name: 'image',
+    type: FIELD.IMAGE,
+    label: 'Image',
+    showLabel: false,
+    allowUpdate: true,
+    placeholder: 'Attach image',
+    defaultValue: '',
+    className: 'cursor-pointer',
+    schema: z.custom<File>((v) => v instanceof File, {
+      message: 'Image is required',
+    })
   }
 ]
 
@@ -46,6 +62,7 @@ export type Note = {
   name: string
   note: string
   color: string
+  image?: string
   keywords?: string[]
   timestamp: Timestamp | {
     _seconds: number

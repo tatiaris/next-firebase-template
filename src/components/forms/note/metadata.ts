@@ -49,7 +49,11 @@ export const FIELDS: FieldObject[] = [
     allowUpdate: true,
     placeholder: 'Attach image',
     className: 'cursor-pointer',
-    schema: z.custom<File>((v) => v instanceof File).optional(),
+    schema: z.instanceof(File).refine(file => file.size <= MAX_FILE_SIZE, {
+      message: "File can't be larger than 5MB.",
+    }).refine(file => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: "File must be an image.",
+    }).optional(),
   }
 ]
 

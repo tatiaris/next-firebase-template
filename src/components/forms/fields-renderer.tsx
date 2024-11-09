@@ -4,8 +4,6 @@ import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { FIELD, FieldObject, FORM_TYPE } from "./utils";
 import { Textarea } from "@components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
-import { Label } from "@components/ui/label";
-import { ChangeEvent } from "react";
 import { cn } from "@lib/utils";
 
 /**
@@ -84,7 +82,7 @@ const FieldRender = ({ fieldMetadata, field }: FieldRenderProps) => {
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <input
             type="file"
-            className={cn("flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50")}
+            className={cn("cursor-pointer flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50")}
             name={field.name}
             onChange={e => field.onChange(e.target.files?.[0] as File)}
             onBlur={field.onBlur}

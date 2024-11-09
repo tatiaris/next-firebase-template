@@ -90,6 +90,20 @@ const FieldRender = ({ fieldMetadata, field }: FieldRenderProps) => {
           />
         </div>
       )
+    case FIELD.MULTI_IMAGE:
+      return (
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <input
+            type="file"
+            multiple
+            className={cn("cursor-pointer flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50")}
+            name={field.name}
+            onChange={e => field.onChange(e.target.files)}
+            onBlur={field.onBlur}
+            ref={field.ref}
+          />
+        </div>
+      )
     default:
       break;
   }

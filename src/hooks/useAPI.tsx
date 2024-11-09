@@ -4,11 +4,11 @@ import { addObjectToCollection, deleteDocById, deleteFile, getCollectionWithIds,
 import { Collections } from "@lib/constants";
 import { Note } from "@components/forms/note/metadata";
 
-type APIMethods = {
+export type APIMethods = {
   isLoading: boolean;
   fetchNotes: () => Promise<Note[]>;
   addNote: (note: Partial<Note>) => Promise<Note>;
-  updateNote: (note: Partial<Note> & { id: string }) => Promise<void>;
+  updateNote: (note: Partial<Note> & { id: string }) => Promise<Partial<Note>>;
   deleteNote: (note: Note) => Promise<string>;
   queryNotes: (query: string) => Promise<Note[]>;
   uploadFile: (file: File, path: string, replace?: boolean) => Promise<UploadFileResponse>;

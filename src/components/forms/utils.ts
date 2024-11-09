@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z, ZodType, ZodTypeDef } from "zod";
+import { z } from "zod";
 
 export enum FORM_TYPE {
   CREATE = 'create',
@@ -12,6 +12,7 @@ export enum FIELD {
   TEXTAREA = "textarea",
   SELECT = "select",
   IMAGE = "image",
+  MULTI_IMAGE = "multi-image",
 }
 
 export type FieldObject = {
@@ -39,7 +40,7 @@ export const buildForm = (fields, overrides = {}) => {
     }, ...overrides
   });
 
-  return { form, schema };
+  return form;
 }
 
 export const resetForm = (form, fields, keepDefaultValues = false) => {

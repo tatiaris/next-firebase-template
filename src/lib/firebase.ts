@@ -157,13 +157,14 @@ export const updateObjectById = async (
   colName: string,
   id: string,
   updatedValues: object,
-): Promise<void> => {
-  const [updateDocError] = (await awaitData(
+): Promise<any> => {
+  const [, updateDocError] = (await awaitData(
     updateDoc,
     doc(db, colName, id),
     updatedValues,
-  )) as [FirestoreError];
+  ));
   if (updateDocError) handleFirestoreError("updateObjectById", updateDocError);
+  return updatedValues;
 };
 
 export const updateOrAddObjectById = async (

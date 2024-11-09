@@ -13,7 +13,7 @@ export default function LoginForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { form } = buildForm(FIELDS);
+  const form = buildForm(FIELDS);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function onSubmit(values: { email: string, password: string }) {

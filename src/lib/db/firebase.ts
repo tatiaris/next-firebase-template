@@ -1,4 +1,4 @@
-import { Auth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { Auth } from "firebase/auth";
 import { deleteObject, FirebaseStorage, getDownloadURL, ref, StorageError, uploadBytes } from "firebase/storage";
 import { addDoc, collection, deleteDoc, doc, DocumentData, Firestore, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 

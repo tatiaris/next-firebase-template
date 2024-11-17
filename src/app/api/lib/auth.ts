@@ -18,7 +18,3 @@ export const authenticate = async (request: NextRequest) => {
     return [true, user];
   }
 };
-
-export const errorResponse = (status: HttpStatus) => {
-  return new Response(HttpStatus[status], { status });
-}

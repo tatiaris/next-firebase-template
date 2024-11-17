@@ -1,5 +1,5 @@
 import { addObjectToCollection, findObjectByFilter } from "./firebase";
-import { Collections } from "src/lib/constants";
+import { Collection } from "src/lib/constants";
 import { Timestamp } from "@google-cloud/firestore";
 import { firestore } from "firebase-admin";
 
@@ -50,7 +50,7 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
     return true;
   const [user] = await awaitData(
     findObjectByFilter,
-    Collections.User,
+    Collection.User,
     "username",
     "==",
     username,
@@ -93,7 +93,7 @@ export const replaceHttpWithHttps = (url: string): string => {
 };
 
 export const deleteUser = async (userId: string) => {
-  const userRef = firestore().collection(Collections.User).doc(userId);
+  const userRef = firestore().collection(Collection.User).doc(userId);
   const userDoc = await userRef.get();
 
   if (!userDoc.exists) return;

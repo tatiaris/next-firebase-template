@@ -1,11 +1,4 @@
-export type Session = {
-  id: string;
-  email: string;
-  name: string;
-  photoURL: string;
-};
-
-export type UserObjectDB = {
+export type UserDB = {
   id: string;
   email: string;
   username: string;

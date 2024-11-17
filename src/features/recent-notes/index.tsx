@@ -1,12 +1,12 @@
 import React from "react";
+import useFirebase from "@hooks/useFirebase";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { DataTable } from "./data-table";
+import { DataTable } from "../../components/ui/data-table";
 import Loading from "@components/ui/loading";
 import { Note, noteSchema } from "@components/forms/note/metadata";
 import { DataTableRowActions } from "./data-table-row-actions";
-import useAPI from "@hooks/useAPI";
 import { useQuery } from "@tanstack/react-query";
-import { TIME } from "@lib/constants";
+import { Collection, TIME } from "@lib/constants";
 import Image from "next/image";
 
 /**
@@ -18,8 +18,8 @@ export const getRowColor = (row: Row<Note>) => {
 }
 
 export default function RecentNotes() {
-  const api = useAPI();
-  const notes = useQuery({ queryKey: ["notes"], staleTime: TIME.ONE_MINUTE, queryFn: api.fetchNotes });
+  const { db } = useFirebase();
+  const notes = useQuery({ queryKey: ["notes"], staleTime: TIME.ONE_MINUTE, queryFn: () => db.getCollectionWithIds<Note>(Collection.Note) });
 
   const columns: ColumnDef<Note>[] = [
     {
@@ -58,5 +58,3 @@ export default function RecentNotes() {
     <DataTable columns={columns} data={notes.data} />
   );
 };
-
-

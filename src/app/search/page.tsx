@@ -1,16 +1,16 @@
 "use client";
-import { useAuth } from "@hooks/useAuth";
-import Loading, { LoadingComponent } from "@components/ui/loading";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Input } from "@components/ui/input";
-import useDebounce from "@hooks/useDebounce";
+import { useRouter } from "next/navigation";
+import { Timestamp } from "firebase/firestore";
+import useFirebase from "@hooks/useFirebase";
 import useAPI from "@hooks/useAPI";
-import { Note, noteSchema } from "@components/forms/note/metadata";
+import useDebounce from "@hooks/useDebounce";
 import { ColumnDef } from "@tanstack/react-table";
 import { getRowColor } from "@features/recent-notes";
-import { DataTable } from "@features/recent-notes/data-table";
-import { Timestamp } from "firebase/firestore";
+import { Input } from "@components/ui/input";
+import { Note, noteSchema } from "@components/forms/note/metadata";
+import { DataTable } from "@components/ui/data-table";
+import Loading, { LoadingComponent } from "@components/ui/loading";
 
 const cleanupNotes = (notes: Note[]) => notes.map((note) => {
   if (!(note.timestamp instanceof Timestamp)) {
@@ -21,7 +21,7 @@ const cleanupNotes = (notes: Note[]) => notes.map((note) => {
 
 export default function Search() {
   const router = useRouter();
-  const { isGuest, isLoading } = useAuth();
+  const { isGuest, isLoading } = useFirebase();
   const api = useAPI();
   const [searchQuery, setSearchQuery] = useState("");
   const [inProgress, searchResults] = useDebounce<Note[]>(api.queryNotes, searchQuery, cleanupNotes);

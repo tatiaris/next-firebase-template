@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { useAuth } from "./useAuth";
+import useFirebase from "./useFirebase";
 
 // Logger context interface
 interface Logger {
@@ -21,19 +21,19 @@ export const LoggerContext = createContext<Logger>({
 });
 
 export const LoggerProvider = ({ children }) => {
-  const auth = useAuth();
+  const { user } = useFirebase();
   const [analytics, setAnalytics] = useState(null);
 
   const logMethod =
     (method: LogMethod) =>
-    (message: any, ...optionalParams: any[]) => {
-      method({
-        time: new Date().toISOString(),
-        session: auth.user,
-        message,
-        ...optionalParams,
-      });
-    };
+      (message: any, ...optionalParams: any[]) => {
+        method({
+          time: new Date().toISOString(),
+          session: user,
+          message,
+          ...optionalParams,
+        });
+      };
 
   const logger: Logger = {
     log: logMethod(console.log),

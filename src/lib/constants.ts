@@ -1,4 +1,4 @@
-export enum Collections {
+export enum Collection {
   User = "user",
   Auth = "auth",
   Note = "note",

@@ -1,12 +1,12 @@
+import useFirebase from "@hooks/useFirebase";
 import RecentNotes from "@features/recent-notes";
 import LoginForm from "@components/forms/login";
 import NoteForm from "@components/forms/note";
 import Loading, { LoadingComponent } from "@components/ui/loading";
-import { useAuth } from "@hooks/useAuth";
 import { FORM_TYPE } from "@components/forms/utils";
 
 export default function Home() {
-  const { user, isGuest, isLoading } = useAuth();
+  const { user, isGuest, isLoading } = useFirebase();
 
   if (isLoading) {
     return (

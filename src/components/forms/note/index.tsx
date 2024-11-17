@@ -1,19 +1,18 @@
-// NoteForm.tsx
 "use client";
 import React from "react";
+import useFirebase from "@hooks/useFirebase";
 import { Timestamp } from "firebase/firestore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAPI from "@hooks/useAPI";
 import { useToast } from "@hooks/useToast";
 import { cn, getUploadedFileUrl, replaceFile } from "@lib/utils";
 import { Form } from "@components/ui/form";
 import { Button } from "@components/ui/button";
 import { Icons } from "@components/ui/icons";
-import { useAuth } from "@hooks/useAuth";
 import { FIELDS, Note } from "./metadata";
 import { FieldsRenderer } from "../fields-renderer";
 import { buildForm, FORM_TYPE, resetForm } from "../utils";
 import { FormImagePreview } from "@features/form-image-preview";
+import { Collection } from "@lib/constants";
 
 type NoteFormProps = React.HTMLAttributes<HTMLDivElement> & {
   formType: FORM_TYPE;
@@ -21,8 +20,7 @@ type NoteFormProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export default function NoteForm({ formType, className, ...props }: NoteFormProps) {
-  const auth = useAuth();
-  const api = useAPI();
+  const { user, db } = useFirebase();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -33,21 +31,21 @@ export default function NoteForm({ formType, className, ...props }: NoteFormProp
   const noteMutation = useMutation({
     mutationKey: ["notes"],
     mutationFn: async (values: Partial<Note>) => {
-      if (!auth.user || !api || !auth.user.email) throw new Error("User not authenticated");
+      if (!user || !user.email) throw new Error("User not authenticated");
       values.keywords = values.note?.toLowerCase().split(/\s+/);
-      if (values.image) values.image = (isUpdateForm ? await replaceFile(api, note.image, values.image) : await getUploadedFileUrl(api, values.image))
+      if (values.image) values.image = (isUpdateForm ? await replaceFile(db, note.image, values.image) : await getUploadedFileUrl(db, values.image))
       if (!values.image) delete values.image;
 
       if (isUpdateForm) {
-        const updatedValues = await api.updateNote({ id: note.id, ...values })
-        return { ...note, ...updatedValues } as Note;
+        await db.updateObject(Collection.Note, note.id, values);
+        return { ...note, ...values } as Note;
       }
-      return api.addNote({
-        userId: auth.user.uid,
-        name: auth.user.displayName || auth.user.email,
+      return db.addObject(Collection.Note, {
+        userId: user.uid,
+        name: user.displayName || user.email,
         timestamp: Timestamp.now(),
         ...values,
-      });
+      } as Note);
     },
     onSuccess: (newNote) => {
       resetForm(form, FIELDS);

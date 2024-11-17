@@ -1,13 +1,13 @@
 "use client";
-import { useAuth } from "@hooks/useAuth";
+import useFirebase from "@hooks/useFirebase";
+import RecentNotes from "@features/recent-notes";
 import LoginForm from "@components/forms/login";
 import Loading, { LoadingComponent } from "@components/ui/loading";
 import NoteForm from "@components/forms/note";
-import RecentNotes from "src/features/recent-notes";
 import { FORM_TYPE } from "@components/forms/utils";
 
 export default function Home() {
-  const { user, isGuest, isLoading } = useAuth();
+  const { user, isGuest, isLoading } = useFirebase();
 
   if (isLoading) {
     return (

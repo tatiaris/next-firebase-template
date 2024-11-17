@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "@hooks/useAuth";
+import useFirebase from "@hooks/useFirebase";
 import { Row } from "@tanstack/react-table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@components/ui/dropdown-menu";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@components/ui/drawer";
@@ -8,26 +8,25 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Note, noteSchema } from "@components/forms/note/metadata";
 import { useToast } from "@hooks/useToast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAPI from "@hooks/useAPI";
 import NoteForm from "@components/forms/note";
 import { FORM_TYPE } from "@components/forms/utils";
+import { Collection } from "@lib/constants";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
 }
 
 export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TData>) {
-  const auth = useAuth();
-  const api = useAPI();
-  const note = noteSchema.parse(row.original);
+  const { user, db } = useFirebase();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const note = noteSchema.parse(row.original);
 
   const deleteNote = useMutation({
     mutationKey: ["notes"],
     mutationFn: async (note: Note) => {
-      if (note.image) await api.deleteFile(note.image);
-      return api.deleteNote(note) as Promise<string>
+      if (note.image) await db.deleteFile(note.image);
+      return db.deleteObject(Collection.Note, note.id);
     },
     onSuccess: () => {
       queryClient.setQueryData(['notes'], (old: Note[]) => old.filter((n) => n.id !== note.id));
@@ -40,7 +39,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<TDa
 
   const handleDelete = () => deleteNote.mutate(note)
 
-  if (auth.user?.uid !== note.userId) return null;
+  if (user?.uid !== note.userId) return null;
 
   return (
     <DropdownMenu>

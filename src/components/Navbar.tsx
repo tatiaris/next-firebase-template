@@ -1,10 +1,9 @@
 import React from "react";
-import { Button } from "./ui/button";
-import { useAuth } from "@hooks/useAuth";
-import { signOutFromGoogle } from "@lib/firebase";
-import { useRouter } from "next/navigation";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import useFirebase from "@hooks/useFirebase";
+import { Button } from "./ui/button";
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from "./ui/menubar";
 
 /**
  * Navbar component
@@ -12,18 +11,19 @@ import Image from "next/image";
 
 export const Navbar: React.FC = (): React.ReactElement => {
   const router = useRouter();
-  const { isGuest, user } = useAuth();
+  const { isGuest, user, signOutUser } = useFirebase();
+  const pathname = usePathname();
 
   return (
     <div className="px-4 py-4 pr-8 flex justify-between border-b-2 border-zinc">
       <div className="flex gap-2">
-        <Button variant="link" onClick={() => router.push("/")}>
+        <Button variant={pathname === "/" ? "default" : "link"} onClick={() => router.push("/")}>
           App
         </Button>
-        <Button variant="link" onClick={() => router.push("/page")}>
+        <Button variant={pathname === "/page" ? "default" : "link"} onClick={() => router.push("/page")}>
           Page
         </Button>
-        <Button variant="link" onClick={() => router.push("/search")}>
+        <Button variant={pathname === "/search" ? "default" : "link"} onClick={() => router.push("/search")}>
           Search
         </Button>
       </div>
@@ -39,7 +39,7 @@ export const Navbar: React.FC = (): React.ReactElement => {
                   {user.displayName || user.email}
                 </MenubarItem>
                 <MenubarSeparator />
-                <MenubarItem role="button" className="cursor-pointer bg-destructive focus:bg-red-600" automation-id="btn-sign-out" onClick={signOutFromGoogle}>
+                <MenubarItem role="button" className="cursor-pointer bg-destructive focus:bg-red-600" automation-id="btn-sign-out" onClick={signOutUser}>
                   Sign Out
                 </MenubarItem>
               </MenubarContent>

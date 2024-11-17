@@ -3,16 +3,17 @@ import { useState } from "react";
 import { Button } from "../../ui/button";
 import { Icons } from "../../ui/icons";
 import { Form } from "../../ui/form";
-import { signInWithEmailPassword, signInWithGooglePopup } from "@lib/firebase";
 import { cn } from "@lib/utils";
 import { buildForm } from "../utils";
 import { FIELDS } from "./metadata";
 import { FieldsRenderer } from "../fields-renderer";
+import useFirebase from "@hooks/useFirebase";
 
 export default function LoginForm({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
+  const { signInWithGoogle, signInWithEmailPassword } = useFirebase();
   const form = buildForm(FIELDS);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -34,7 +35,7 @@ export default function LoginForm({
 
   async function handleSignInWithGoogle() {
     setIsLoading(true);
-    signInWithGooglePopup()
+    signInWithGoogle()
       .then(() => {
         setIsLoading(false);
       })

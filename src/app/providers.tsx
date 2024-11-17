@@ -3,18 +3,16 @@ import { Footer } from "@components/Footer";
 import { Navbar } from "@components/Navbar";
 import { Toaster } from "@components/ui/toaster";
 import { APIProvider } from "@hooks/useAPI";
-import { AuthProvider } from "@hooks/useAuth";
 import { CacheProvider } from "@hooks/useCache";
+import { FirebaseProvider } from "@hooks/useFirebase";
 import { LoggerProvider } from "@hooks/useLogger";
 import { ThemeProvider } from "@hooks/useTheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
-
 export default function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <QueryClientProvider client={new QueryClient()}>
+      <FirebaseProvider>
         <LoggerProvider>
           <CacheProvider>
             <APIProvider>
@@ -31,7 +29,7 @@ export default function Providers({ children }: Readonly<{ children: React.React
             </APIProvider>
           </CacheProvider>
         </LoggerProvider>
-      </AuthProvider>
+      </FirebaseProvider>
     </QueryClientProvider>
   );
 }

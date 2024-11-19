@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Auth, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User } from "firebase/auth";
+import { Auth, createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User, UserCredential } from "firebase/auth";
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { FirebaseStorage, getStorage } from "firebase/storage";
 import { Firestore, getFirestore } from "firebase/firestore";
 import { config } from "src/config";
 import FirebaseDB from "@lib/db/firebase";
+import { Collection } from "@lib/constants";
 
 const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string);
 
@@ -44,20 +45,43 @@ export const FirebaseProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const googleAuthProvider = new GoogleAuthProvider();
 
+  async function ensureUserExists(credentials: UserCredential) {
+    const userExists = await db.exists(Collection.User, credentials.user.uid);
+    if (!userExists) {
+      await db.setObject(Collection.User, credentials.user.uid, {
+        uid: credentials.user.uid,
+        email: credentials.user.email,
+        name: credentials.user.displayName,
+        photoURL: credentials.user.photoURL,
+      });
+    }
+  }
+
   async function signInWithGoogle() {
-    await signInWithPopup(auth, googleAuthProvider);
+    try {
+      const credentials = await signInWithPopup(auth, googleAuthProvider);
+      await ensureUserExists(credentials);
+    } catch (error) {
+      console.error('Error in signInWithGoogle:', error);
+      throw new Error('Could not sign in with Google');
+    }
   }
 
   async function signInWithEmailPassword(email: string, password: string) {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const credentials = await signInWithEmailAndPassword(auth, email, password);
+      await ensureUserExists(credentials);
     } catch (error) {
-      if (
-        error.code === "auth/user-not-found" ||
-        error.code === "auth/invalid-credential"
-      ) {
-        await createUserWithEmailAndPassword(auth, email, password);
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        try {
+          const newUserCredentials = await createUserWithEmailAndPassword(auth, email, password);
+          await ensureUserExists(newUserCredentials);
+        } catch (createError) {
+          console.error('Error creating new user:', createError);
+          throw createError;
+        }
       } else {
+        console.error('Error in signInWithEmailPassword:', error);
         throw error;
       }
     }
